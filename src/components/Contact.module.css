@@ -1,0 +1,129 @@
+.section {
+  border-top: 1px solid var(--c-border-subtle);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--sp-section) var(--container-padding);
+}
+
+.inner {
+  max-width: 600px;
+}
+
+/* ── Header ── */
+.label {
+  display: block;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 16px;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--c-text);
+  margin-bottom: 20px;
+}
+
+.body {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--c-text-secondary);
+  margin-bottom: 48px;
+}
+
+/* ── Links ── */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.linkItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--c-border-subtle);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.linkItem:last-child {
+  border-bottom: none;
+}
+
+.linkItem:hover {
+  background: var(--c-surface);
+}
+
+.linkLabel {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+}
+
+.link {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--c-text-secondary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--c-accent);
+}
+
+/* ── Footer bar ── */
+.footer {
+  border-top: 1px solid var(--c-border-subtle);
+  padding: 24px var(--container-padding);
+}
+
+.footerInner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footerName {
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.footerCopy {
+  font-size: 12px;
+  color: var(--c-text-muted);
+  opacity: 0.6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .linkItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .footerInner {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}

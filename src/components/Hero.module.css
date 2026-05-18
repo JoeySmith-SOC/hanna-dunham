@@ -1,0 +1,273 @@
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ── Background gradient base ── */
+.gradientBase {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 130% 65% at 50% -5%, rgba(212, 168, 67, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 70% at 92% 95%, rgba(99, 102, 241, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 55% at 8% 65%, rgba(212, 168, 67, 0.03) 0%, transparent 55%);
+  z-index: 0;
+}
+
+/* ── Mouse-tracking spotlight — reads --mx and --my from JS ── */
+.gradientMouseSpotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 45% at var(--mx) var(--my),
+    rgba(212, 168, 67, 0.07),
+    transparent 65%
+  );
+  z-index: 0;
+  pointer-events: none;
+  will-change: background;
+}
+
+/* ── Subtle grid pattern ── */
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, black 20%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, black 20%, transparent 85%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Floating document frames ── */
+.docFrame {
+  position: absolute;
+  border: 1px solid rgba(212, 168, 67, 0.07);
+  border-radius: var(--radius-sm);
+  background: rgba(212, 168, 67, 0.018);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.docInnerLines {
+  position: absolute;
+  inset: 20px 24px;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 19px,
+    rgba(255, 255, 255, 0.028) 19px,
+    rgba(255, 255, 255, 0.028) 20px
+  );
+}
+
+/* Document frame 1 — top right */
+.doc1 {
+  width: 180px;
+  height: 240px;
+  top: 14%;
+  right: 9%;
+  transform: rotate(7deg);
+}
+
+/* Document frame 2 — bottom left */
+.doc2 {
+  width: 148px;
+  height: 200px;
+  bottom: 18%;
+  left: 7%;
+  transform: rotate(-5deg);
+}
+
+/* Document frame 3 — mid right, secondary */
+.doc3 {
+  width: 90px;
+  height: 120px;
+  top: 58%;
+  right: 24%;
+  transform: rotate(2deg);
+  opacity: 0.45;
+}
+
+/* ── Hero content ── */
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 100px var(--container-padding) 80px;
+}
+
+.textStack {
+  max-width: 720px;
+}
+
+/* ── Label ── */
+.label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 32px;
+}
+
+/* ── Name ── */
+.name {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+  margin: 0;
+}
+
+.credential {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 30px);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--c-accent);
+  margin: 6px 0 28px 0;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+/* ── Tagline ── */
+.tagline {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--c-text-secondary);
+  margin: 0 0 52px 0;
+  max-width: 520px;
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 36px;
+  background: var(--c-accent);
+  color: #09090b;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.primaryBtn:hover {
+  background: var(--c-accent-hover);
+  transform: translateY(-2px);
+}
+
+.primaryBtn:active {
+  transform: translateY(0);
+}
+
+.ghostBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 36px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--c-text-secondary);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.ghostBtn:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+  color: var(--c-text);
+  transform: translateY(-2px);
+}
+
+.ghostBtn:active {
+  transform: translateY(0);
+}
+
+/* ── Scroll indicator ── */
+.scrollIndicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--c-accent), transparent);
+  animation: scrollPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  30%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  70%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+.scrollText {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .doc1,
+  .doc2,
+  .doc3 {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .primaryBtn,
+  .ghostBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,127 @@
+.section {
+  padding-top: var(--sp-section);
+  padding-bottom: var(--sp-section);
+  border-top: 1px solid var(--c-border-subtle);
+  background: var(--c-surface);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* ── Card ── */
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: clamp(48px, 8vw, 80px);
+}
+
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(212, 168, 67, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(212, 168, 67, 0.04) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 1;
+  max-width: 540px;
+}
+
+/* ── Label ── */
+.label {
+  display: block;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 16px;
+}
+
+/* ── Heading ── */
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--c-text);
+  margin-bottom: 20px;
+}
+
+/* ── Body ── */
+.body {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--c-text-secondary);
+  margin-bottom: 40px;
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: var(--c-accent);
+  color: #09090b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.downloadBtn:hover {
+  background: var(--c-accent-hover);
+  transform: translateY(-2px);
+}
+
+.downloadBtn:active {
+  transform: translateY(0);
+}
+
+.linkedinBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 36px;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.linkedinBtn:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--c-text);
+  transform: translateY(-2px);
+}
+
+.linkedinBtn:active {
+  transform: translateY(0);
+}

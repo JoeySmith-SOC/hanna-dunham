@@ -1,0 +1,189 @@
+.section {
+  padding-top: var(--sp-section);
+  padding-bottom: var(--sp-section);
+  border-top: 1px solid var(--c-border-subtle);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: var(--sp-component);
+}
+
+.label {
+  display: block;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 16px;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--c-text);
+}
+
+/* ── Timeline layout ── */
+.timeline {
+  display: grid;
+  grid-template-columns: 1px 1fr;
+  gap: 0 40px;
+}
+
+/* ── Vertical line ── */
+.lineTrack {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  background: var(--c-border);
+  align-self: stretch;
+}
+
+.line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--c-accent),
+    rgba(212, 168, 67, 0.2)
+  );
+  transform-origin: top;
+}
+
+/* ── Entries column ── */
+.entries {
+  grid-column: 2;
+}
+
+/* ── Single entry ── */
+.entry {
+  position: relative;
+  padding-bottom: 56px;
+}
+
+.entry:last-child {
+  padding-bottom: 0;
+}
+
+/* Dot on the timeline line */
+.dot {
+  position: absolute;
+  left: -47px; /* places dot centred on the 1px line */
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  background: var(--c-bg);
+  border: 1.5px solid var(--c-accent);
+  border-radius: 50%;
+}
+
+.entryInner {
+  /* nothing special — just natural flow */
+}
+
+/* ── Entry header ── */
+.entryHeader {
+  margin-bottom: 16px;
+}
+
+.entryMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.period {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--c-accent);
+  text-transform: uppercase;
+}
+
+.company {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.role {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 22px);
+  font-weight: 400;
+  color: var(--c-text);
+  line-height: 1.25;
+}
+
+/* ── Description ── */
+.description {
+  font-size: var(--fs-small);
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--c-text-secondary);
+  max-width: 640px;
+  margin-bottom: 20px;
+}
+
+/* ── Tags ── */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--c-text-muted);
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  background: var(--c-surface);
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.tag:hover {
+  border-color: var(--c-accent-dim);
+  color: var(--c-accent);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .lineTrack {
+    display: none;
+  }
+
+  .dot {
+    display: none;
+  }
+
+  .entries {
+    grid-column: 1;
+  }
+
+  .entry {
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--c-border-subtle);
+  }
+
+  .entry:last-child {
+    border-bottom: none;
+  }
+}

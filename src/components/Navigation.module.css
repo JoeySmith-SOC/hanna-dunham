@@ -1,0 +1,213 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  height: 64px;
+  border-bottom: 1px solid transparent;
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    backdrop-filter var(--dur-base) var(--ease-out);
+}
+
+.nav.scrolled {
+  background: rgba(9, 9, 11, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-color: var(--c-border);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* ── Monogram ── */
+.monogram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--c-accent);
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.monogram:hover {
+  border-color: var(--c-accent);
+  background: var(--c-accent-subtle);
+}
+
+/* ── Desktop links ── */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.link {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--c-text-secondary);
+  transition: color var(--dur-fast) var(--ease-out);
+  position: relative;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--c-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--c-text);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+}
+
+/* ── Right side ── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.resumeBtn {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-bg);
+  background: var(--c-accent);
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.resumeBtn:hover {
+  background: var(--c-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Mobile toggle ── */
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.bar {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background: var(--c-text);
+  border-radius: 1px;
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+
+.barOpen1 {
+  transform: rotate(45deg) translate(4px, 4px);
+}
+
+.barOpen2 {
+  transform: rotate(-45deg) translate(4px, -4px);
+}
+
+/* ── Mobile drawer ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: calc(var(--z-nav) - 1);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(300px, 85vw);
+  background: var(--c-surface);
+  border-left: 1px solid var(--c-border);
+  z-index: var(--z-nav);
+  padding: 80px 32px 40px;
+}
+
+.drawerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawerLink {
+  display: block;
+  padding: 12px 0;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--c-text-secondary);
+  border-bottom: 1px solid var(--c-border-subtle);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.drawerLink:hover {
+  color: var(--c-text);
+}
+
+.drawerResume {
+  display: inline-block;
+  margin-top: 32px;
+  padding: 12px 28px;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .links {
+    display: none;
+  }
+
+  .resumeBtn {
+    display: none;
+  }
+
+  .menuToggle {
+    display: flex;
+  }
+}
