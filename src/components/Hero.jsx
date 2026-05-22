@@ -29,6 +29,7 @@ export default function Hero() {
   const doc1Y = useTransform(scrollY, [0, 700], [0, 70]);
   const doc2Y = useTransform(scrollY, [0, 700], [0, -45]);
   const doc3Y = useTransform(scrollY, [0, 700], [0, 90]);
+  const doc4Y = useTransform(scrollY, [0, 700], [0, -30]);
   const contentY = useTransform(scrollY, [0, 500], [0, -24]);
 
   // Mouse-tracking spotlight — updates CSS custom property directly on DOM (no React re-render)
@@ -66,8 +67,10 @@ export default function Hero() {
     >
       {/* Background layers */}
       <div className={styles.gradientBase} aria-hidden="true" />
+      <div className={styles.ambientLayer} aria-hidden="true" />
       <div className={styles.gradientMouseSpotlight} aria-hidden="true" />
       <div className={styles.gridOverlay} aria-hidden="true" />
+      <div className={styles.bottomVignette} aria-hidden="true" />
 
       {/* Floating document frames — decorative, parallax */}
       {!prefersReducedMotion && (
@@ -88,6 +91,12 @@ export default function Hero() {
             className={`${styles.docFrame} ${styles.doc3}`}
             style={{ y: doc3Y }}
           />
+          <motion.div
+            className={`${styles.docFrame} ${styles.doc4}`}
+            style={{ y: doc4Y }}
+          >
+            <div className={styles.docInnerLines} />
+          </motion.div>
         </div>
       )}
 
@@ -125,6 +134,9 @@ export default function Hero() {
             </a>
             <a href={meta.resumeUrl} className={styles.ghostBtn} download>
               Download Resume
+            </a>
+            <a href="#contact" className={styles.ghostBtn}>
+              Contact
             </a>
           </motion.div>
         </motion.div>

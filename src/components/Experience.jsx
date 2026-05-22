@@ -6,9 +6,11 @@ import styles from './Experience.module.css';
 
 function TimelineEntry({ entry, index }) {
   return (
-    <ScrollReveal delay={index * 0.1} className={styles.entry}>
+    <ScrollReveal delay={index * 0.08} className={styles.entry}>
       {/* Dot on timeline */}
-      <div className={styles.dot} aria-hidden="true" />
+      <div className={styles.dot} aria-hidden="true">
+        <div className={styles.dotCore} aria-hidden="true" />
+      </div>
 
       <div className={styles.entryInner}>
         {/* Header row */}
@@ -17,6 +19,9 @@ function TimelineEntry({ entry, index }) {
             <span className={styles.period}>{entry.period}</span>
             <span className={styles.company}>{entry.company}</span>
           </div>
+          {entry.subcompany && (
+            <p className={styles.subcompany}>{entry.subcompany}</p>
+          )}
           <h3 className={styles.role}>{entry.role}</h3>
         </div>
 

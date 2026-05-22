@@ -27,7 +27,16 @@ export default function Downloads() {
                   aria-label="Download resume as PDF"
                 >
                   <DownloadIcon />
-                  Download Resume
+                  PDF Resume
+                </a>
+                <a
+                  href={meta.resumeDocxUrl}
+                  className={styles.docxBtn}
+                  download
+                  aria-label="Download resume as Word document"
+                >
+                  <DownloadIcon />
+                  Word Resume
                 </a>
                 <a
                   href={meta.linkedin}
@@ -50,8 +59,8 @@ export default function Downloads() {
 function DownloadIcon() {
   return (
     <svg
-      width="16"
-      height="16"
+      width="14"
+      height="14"
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden="true"
