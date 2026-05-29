@@ -7,14 +7,14 @@
   overflow: hidden;
 }
 
-/* Subtle background atmosphere for the section */
+/* Section atmosphere */
 .section::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(212, 168, 67, 0.025) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(99, 102, 241, 0.015) 0%, transparent 65%);
+    radial-gradient(ellipse 55% 45% at 18% 55%, rgba(212, 168, 67, 0.025) 0%, transparent 65%),
+    radial-gradient(ellipse 48% 55% at 82% 50%, rgba(99, 102, 241, 0.014) 0%, transparent 65%);
   pointer-events: none;
 }
 
@@ -27,7 +27,7 @@
 
 /* ── Header ── */
 .header {
-  margin-bottom: var(--sp-component);
+  margin-bottom: 52px;
 }
 
 .label {
@@ -46,153 +46,198 @@
   font-weight: 400;
   line-height: 1.15;
   color: var(--c-text);
+  margin-bottom: 16px;
 }
 
-/* ── Cards grid ── */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+.subheading {
+  font-size: var(--fs-small);
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--c-text-muted);
+  max-width: 480px;
 }
 
-/* ── Single capability card ── */
-.card {
+/* ── Network canvas ── */
+/* Aspect-ratio trick: 800÷460 ≈ 57.5% */
+.networkWrap {
   position: relative;
-  background: var(--c-glass);
-  border: 1px solid var(--c-glass-border);
-  border-radius: var(--radius-md);
-  padding: 28px 24px 32px;
-  overflow: hidden;
-  transition:
-    border-color 360ms var(--ease-out),
-    transform 360ms var(--ease-out),
-    box-shadow 360ms var(--ease-out);
+  width: 100%;
+  height: 0;
+  padding-bottom: 57.5%;
+  margin-bottom: 0;
 }
 
-/* Hover illumination — gold radial glow from top */
-.card::before {
-  content: '';
+.networkSvg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 130% 90% at 50% -10%,
-    rgba(212, 168, 67, 0.08) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 400ms var(--ease-out);
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Cursor changes when hovering interactive nodes handled per-element */
 }
 
-/* Hover state */
-.card:hover {
-  border-color: var(--c-glass-border-hover);
-  transform: translateY(-3px);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(212, 168, 67, 0.05) inset,
-    0 -1px 0 0 rgba(212, 168, 67, 0.12) inset;
+/* ── Skills panel ── */
+.skillsPanel {
+  border-top: 1px solid var(--c-border-subtle);
+  padding-top: 40px;
+  padding-bottom: 8px;
+  min-height: 148px;
 }
 
-.card:hover::before {
-  opacity: 1;
+.skillsPanelInner {
+  /* flow */
 }
 
-/* ── Card top: index + category name ── */
-.cardTop {
+.skillsRow {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: baseline;
+  gap: 16px;
   margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--c-border-subtle);
 }
 
-.cardIndex {
+.skillsIndex {
   font-family: var(--font-body);
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--c-accent);
   opacity: 0.55;
-  padding-top: 3px;
-  min-width: 18px;
+  min-width: 20px;
   flex-shrink: 0;
 }
 
-.category {
+.skillsCategory {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 400;
+  color: var(--c-text);
+  line-height: 1.15;
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 44px;
+}
+
+.skillItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: var(--fs-small);
+  font-weight: 300;
+  color: var(--c-text-secondary);
+  line-height: 1.4;
+  /* Approximately 2-column layout */
+  min-width: clamp(170px, 28%, 260px);
+}
+
+.skillDash {
+  color: var(--c-accent);
+  opacity: 0.4;
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.13em;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+/* ── Mobile fallback ── */
+/* Hidden on desktop, revealed ≤640px */
+.mobileFallback {
+  display: none;
+}
+
+.mobileTabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.mobileTab {
+  padding: 8px 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--c-text-muted);
-  line-height: 1.45;
-  margin: 0;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
 }
 
-/* ── Skill list ── */
-.skills {
+.mobileTab:hover {
+  border-color: rgba(212, 168, 67, 0.3);
+  color: var(--c-text-secondary);
+}
+
+.mobileTabActive {
+  border-color: rgba(212, 168, 67, 0.45);
+  color: var(--c-accent);
+  background: rgba(212, 168, 67, 0.05);
+}
+
+.mobilePanel {
+  border-top: 1px solid var(--c-border-subtle);
+  padding-top: 28px;
+  min-height: 160px;
+}
+
+.mobileCategoryName {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 400;
+  color: var(--c-text);
+  margin-bottom: 20px;
+}
+
+.mobileSkillList {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
 }
 
-.skill {
+.mobileSkillItem {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-small);
   font-weight: 300;
   color: var(--c-text-secondary);
-  line-height: 1.35;
-  transition:
-    color var(--dur-base) var(--ease-out),
-    transform var(--dur-base) var(--ease-out);
+  line-height: 1.4;
 }
 
-.skill:hover {
-  color: var(--c-text);
-  transform: translateX(3px);
-}
-
-/* Short editorial dash instead of dot — more refined */
-.skillLine {
+.mobileSkillDash {
+  color: var(--c-accent);
+  opacity: 0.4;
+  font-size: 10px;
   flex-shrink: 0;
-  width: 14px;
-  height: 1px;
-  background: var(--c-accent);
-  opacity: 0.35;
-  transition:
-    width var(--dur-slow) var(--ease-out),
-    opacity var(--dur-slow) var(--ease-out);
-}
-
-.skill:hover .skillLine {
-  width: 20px;
-  opacity: 0.75;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
+@media (max-width: 960px) {
+  /* Reduce network height to avoid excessive whitespace on tablets */
+  .networkWrap {
+    padding-bottom: 52%;
   }
 }
 
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
+@media (max-width: 640px) {
+  /* Hide SVG network and desktop skills panel on small screens */
+  .networkWrap {
+    display: none;
   }
 
-  .card {
-    padding: 24px 20px 28px;
+  .skillsPanel {
+    display: none;
+  }
+
+  /* Show tab-based mobile fallback */
+  .mobileFallback {
+    display: block;
   }
 }
