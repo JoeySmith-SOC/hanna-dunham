@@ -1,8 +1,7 @@
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Profile from './components/Profile';
-import Experience from './components/Experience';
-import Competencies from './components/Competencies';
+import ExperienceExpertise from './components/ExperienceExpertise';
 import Education from './components/Education';
 import Downloads from './components/Downloads';
 import Contact from './components/Contact';
@@ -14,8 +13,7 @@ export default function App() {
       <main>
         <Hero />
         <Profile />
-        <Experience />
-        <Competencies />
+        <ExperienceExpertise />
         <Education />
         <Downloads />
         <Contact />

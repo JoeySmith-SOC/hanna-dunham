@@ -1,158 +1,133 @@
 # Component System — Hanna S. Dunham
 
-## Architecture
+## Stack
 
-The site uses React 18 + Vite. Components are self-contained: each has a `.jsx` file and a `.module.css` file in `src/components/`.
-
-All design tokens are defined in `src/styles/variables.css` and consumed via CSS custom properties (`var(--token)`). Do not hardcode values that exist as tokens.
+React 18 · Vite 6 · Framer Motion 12 · CSS Modules · JavaScript (no TypeScript)
 
 ---
 
-## Component Inventory
+## File Structure
 
-### Shared
+```
+src/
+├── components/
+│   ├── Navigation.jsx / .module.css
+│   ├── Hero.jsx / .module.css
+│   ├── Profile.jsx / .module.css
+│   ├── ExperienceExpertise.jsx / .module.css   ← signature section
+│   ├── Education.jsx / .module.css
+│   ├── Downloads.jsx / .module.css
+│   ├── Contact.jsx / .module.css
+│   └── ScrollReveal.jsx
+├── data/
+│   └── content.js                              ← single source of truth for all copy
+├── styles/
+│   ├── reset.css
+│   ├── variables.css                           ← all design tokens
+│   └── global.css
+├── App.jsx
+└── main.jsx
+```
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `ScrollReveal` | `src/components/ScrollReveal.jsx` | Wraps any element in a scroll-triggered fade+translate reveal |
-
-**ScrollReveal props:**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | ReactNode | — | Content to animate |
-| `delay` | number | `0` | Seconds before reveal starts |
-| `fromY` | number | `24` | Starting Y offset in px |
-| `className` | string | — | Applied to the wrapper div |
-| `style` | object | — | Inline styles on the wrapper div |
-
----
-
-### Page Components
-
-#### Navigation
-
-**File**: `Navigation.jsx` / `Navigation.module.css`
-
-- Fixed position, full-width
-- Transparent initially → frosted glass after 60px scroll
-- Left: `HD` monogram (links to `#hero`)
-- Center: Navigation links (`#profile`, `#experience`, `#competencies`, `#education`)
-- Right: Resume download CTA + hamburger (mobile)
-- Mobile drawer: slides in from right, with `AnimatePresence` exit animation
-- `aria-expanded` on toggle button, `role="dialog"` on drawer
-
-**Key behaviors:**
-- `body.overflow = 'hidden'` when drawer is open
-- Nav scrolled state via `window.scrollY > 60`
+**Deprecated (do not restore):** `Experience.jsx`, `Experience.module.css`, `Competencies.jsx`, `Competencies.module.css`
 
 ---
 
-#### Hero
+## Component Reference
 
-**File**: `Hero.jsx` / `Hero.module.css`
+### Navigation.jsx
 
-- Full viewport height (`100dvh`)
-- Background: three-layer radial gradient mesh
-- Mouse-tracking spotlight via CSS custom properties (`--mx`, `--my`)
-- Three floating document frames with scroll parallax
-- Staggered content reveal with Framer Motion variants
-- Scroll indicator: CSS animated line + label
-- Reduced motion: hides floating frames, removes parallax and translate animations
+Fixed top bar. Transparent at top, blurs to `rgba(9,9,11,0.88)` with `backdrop-filter` on scroll. Monogram `HD` links to `#hero`. Desktop: inline links. Mobile (≤ 768px): hamburger drawer slides in from right.
 
-**CSS classes in Hero.module.css:**
+Nav links: `Profile → #profile`, `Experience → #experience`, `Education → #education`.
 
-| Class | Purpose |
-|-------|---------|
-| `.gradientBase` | Static multi-layer radial gradient |
-| `.gradientMouseSpotlight` | Mouse-tracking gradient (reads `--mx`, `--my`) |
-| `.gridOverlay` | Subtle CSS grid pattern (mask-faded) |
-| `.docFrame` | Base styles for floating document boxes |
-| `.doc1` / `.doc2` / `.doc3` | Individual document frame positions |
-| `.docInnerLines` | Ruled-line effect inside document frames |
-| `.credential` | J.D. suffix — italic, accent, superscript |
-| `.scrollIndicator` | Bottom-center scroll cue |
+### Hero.jsx
 
----
+Cinematic entrance. Fires on mount, no scroll trigger.
 
-#### Profile
+Key elements:
+- Multi-layer gradient atmosphere + SVG grain texture
+- Mouse-tracking spotlight via CSS custom properties `--mx` / `--my`
+- Atmospheric orbs: large blurred divs, slow CSS keyframe drift + Framer parallax
+- 4 floating document frames (enterprise contract aesthetic, parallax on scroll)
+- Word-by-word name reveal: `overflow: hidden` wrapper + `motion.span y: 115% → 0`
+- Self-drawing gold separator: `motion.div scaleX: 0 → 1`
+- All supporting text: manual `delay` props on `motion.*` (not stagger containers)
 
-**File**: `Profile.jsx` / `Profile.module.css`
+### Profile.jsx
 
-- 2-column grid: summary (left) + key highlights panel (right)
-- Highlight panel: cards with label/value pairs
-- Collapses to single column below 900px
+Two-column: prose summary left, glass highlight card right. Card uses `--c-glass` background with a gold `::before` top-edge line. Row hover uses subtle gold tint.
 
----
+### ExperienceExpertise.jsx — Signature Section
 
-#### Experience
+Combined split section. Replaces separate Experience and Competencies sections.
 
-**File**: `Experience.jsx` / `Experience.module.css`
+**Left column (57%): Career Timeline**
+- 10 entries from `content.js` experience array
+- `DETAIL_THRESHOLD = 1` — only AWS (index 0) renders full description
+- Others: period + company + role + 3 tags maximum
+- Scroll-linked growing line: `useScroll` + `useTransform` on section ref
+- Dot markers: absolutely positioned, aligned to 1px line track
+- `translateX(3px)` hover on `entryBody`, dot glow + role color shift
 
-- Vertical timeline layout using CSS Grid (1px line column + entries column)
-- Timeline line animates via `useScroll` + `useTransform` (scaleY)
-- Each entry: period label → company → role heading → description → tags
-- Tags have hover color interaction
-- Mobile: hides timeline line, uses bottom borders between entries
+**Right column (43%): SVG Capability Network**
+- `position: sticky; top: 80px` — stays pinned while timeline scrolls
+- `500×500` SVG viewBox in `padding-bottom: 100%` aspect-ratio container
+- 5 nodes: hub at `(250, 250)`, 4 satellites at corners (408/92, 95/405)
+- Hub: rotating orbit ring (66s), main circle with `eeHubGlow` filter
+- Connections: `motion.path pathLength` animation, active connection highlights
+- Outer architectural frame (very faint: 0.04–0.055 opacity)
+- Active state: inline CSS `transition: fill 340ms ease` on circle elements
+- Skills panel: `AnimatePresence mode="wait"` transitions between categories
 
----
+### ScrollReveal.jsx
 
-#### Competencies
+Utility wrapper. `motion.div` with `whileInView` + `once: true`. Props: `delay`, `fromY`, `className`, `style`. Handles `useReducedMotion` internally.
 
-**File**: `Competencies.jsx` / `Competencies.module.css`
+### Education.jsx
 
-- 4-column grid of skill categories (→ 2-col at 1024px → 1-col at 520px)
-- Each category: uppercase label + list of skills with accent dot marker
-- Surface background (`--c-surface`) differentiates this section
+J.D. (Western Michigan Cooley, Cum Laude) + B.A. Philosophy (Baylor). Renders from `education` array in `content.js`.
 
----
+### Downloads.jsx
 
-#### Education
+PDF and DOCX resume download links. Files must be placed in `public/documents/` before launch.
 
-**File**: `Education.jsx` / `Education.module.css`
+### Contact.jsx
 
-- 2-column layout: sticky label (left) + credential cards (right)
-- Each card: abbreviated degree (italic serif) + year + full degree name + institution
-- Sticky header tracks scroll on desktop; collapses on mobile
+Email + LinkedIn links. Footer bar with name + copyright. Placeholder values in `content.js` must be updated before launch.
 
 ---
 
-#### Downloads
+## CSS Modules Conventions
 
-**File**: `Downloads.jsx` / `Downloads.module.css`
-
-- Full-width card with subtle gradient glow overlay
-- Two CTAs: Download Resume (primary) + View LinkedIn (ghost)
-- Surface background
-
----
-
-#### Contact
-
-**File**: `Contact.jsx` / `Contact.module.css`
-
-- Clean contact link list (email + LinkedIn)
-- Each contact entry is a row: label left, value right
-- Footer bar with name + copyright
+- One `.module.css` per component. No shared component stylesheets.
+- Global utilities in `global.css`
+- All design values via CSS custom properties — never hardcode hex/px in modules
+- Component classes use camelCase: `.entryBody`, `.skillsCategory`
+- State variants: `.dotCurrent`, `.roleCurrent`, `.mobileTabActive`
+- No BEM. No utility class soup.
 
 ---
 
-## Adding a New Section
+## Data Layer
 
-1. Create `src/components/NewSection.jsx` and `NewSection.module.css`
-2. Import and use `ScrollReveal` for animated reveals
-3. Use `var(--token)` for all colors, spacing, and typography
-4. Follow the section label pattern: `<span className={styles.label}>Section Name</span>`
-5. Add `id="section-slug"` to the `<section>` element for nav linking
-6. Import and render in `src/App.jsx`
-7. Optionally add a nav link in `Navigation.jsx`
+`src/data/content.js` exports:
+
+| Export | Shape | Usage |
+|--------|-------|-------|
+| `meta` | Object | Name, credentials, title, tagline, email, LinkedIn, resume URLs |
+| `profile` | Object | Summary paragraph + highlights array |
+| `experience` | Array | 10 entries: id, period, company, subcompany, role, location, description, tags[] |
+| `competencies` | Array | 5 groups: category, skills[] |
+| `education` | Array | 2 entries: degree, abbreviation, institution, year, honors |
+
+**Rule:** Never duplicate or shadow content in JSX. Update `content.js` only.
 
 ---
 
-## CSS Module Conventions
+## GitHub Pages Deployment
 
-- One CSS module per component, named `ComponentName.module.css`
-- Class names: lowercase, camelCase (`.entryHeader`, `.docFrame`)
-- Never use `!important`
-- Media queries inside each module (not global)
-- Responsive breakpoints: `900px` (primary), `768px` (nav), `600px` (mobile), `520px` (small mobile)
+- Base path: `/hanna-dunham/` baked into `vite.config.js`
+- Deploy: `.github/workflows/deploy.yml`
+- `public/.nojekyll` disables Jekyll
+- Never change `base` without updating all asset paths

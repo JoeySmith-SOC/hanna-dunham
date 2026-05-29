@@ -4,10 +4,9 @@ import { meta } from '../data/content';
 import styles from './Navigation.module.css';
 
 const links = [
-  { label: 'Profile', href: '#profile' },
+  { label: 'Profile',    href: '#profile'    },
   { label: 'Experience', href: '#experience' },
-  { label: 'Competencies', href: '#competencies' },
-  { label: 'Education', href: '#education' },
+  { label: 'Education',  href: '#education'  },
 ];
 
 export default function Navigation() {

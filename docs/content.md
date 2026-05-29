@@ -2,123 +2,148 @@
 
 ## Content Philosophy
 
-This is an employer-facing document, not a resume dump. Every word is edited for signal density. Bullets are rewritten as positioning statements. Responsibilities are reframed as evidence of judgment.
-
-**Rule**: If a sentence could appear on any analyst's resume, cut it. Every sentence must be specific to Hanna.
+Every word on this site must earn its place. The goal is not comprehensiveness — it is authority. A hiring executive should understand exactly who Hanna is and what she does in 30–60 seconds.
 
 ---
 
-## Client Positioning
+## Source of Truth
 
-**Name**: Hanna S. Dunham, J.D.  
-**Title**: Enterprise Contract Governance & Infrastructure Portfolio Analyst  
-**Tagline**: *Translating legal complexity into operational clarity.*
+**All content lives in `src/data/content.js`.**
 
-**Why this tagline**: It defines her unique value proposition in 7 words. It bridges the legal side (J.D., regulatory language) with the operational side (governance frameworks, compliance monitoring). It signals bilingual fluency in two organizational languages.
+Never hardcode copy in JSX. Never duplicate content. If something needs updating, update `content.js` only — components will reflect the change automatically.
 
 ---
 
-## Section-by-Section Guide
+## Content Structure
 
-### Profile / Executive Summary
-
-**Current copy** (`src/data/content.js → profile.summary`):
-
-> Contract governance and infrastructure portfolio analyst with a Juris Doctor and proven expertise across AWS infrastructure services, enterprise lease oversight, and vendor financial compliance. Bridges legal precision with operational discipline — translating complex regulatory and contractual frameworks into governance structures that reduce organizational risk, enforce accountability, and protect enterprise assets at scale. Bilingual in English and Swedish.
-
-**Editorial decisions made**:
-- Opens with the role compound (no pronoun, confident)
-- "Bridges legal precision with operational discipline" — the core value statement
-- Ends with language fluency (differentiator, not filler)
-- No filler phrases: "results-driven", "team player", "passionate"
-
-**To update**: Replace with Hanna's exact positioning once finalized.
-
----
-
-### Experience
-
-**Source**: `src/data/content.js → experience[]`
-
-Each entry has:
-- `period`: Year range (e.g., `"2021 — Present"`)
-- `company`: Employer name — **[PLACEHOLDER]**
-- `role`: Job title
-- `description`: 2–3 sentences, active voice, outcome-focused
-- `tags`: 4 skill tags per entry
-
-**Writing rules for descriptions**:
-1. Start with an active verb (Govern, Manage, Lead, Architect)
-2. State the scope or scale when possible ("multi-year portfolio", "cross-functional")
-3. End with what it produces (compliance, accountability, risk reduction)
-4. No bullet lists. One coherent paragraph.
-
-**To update**: Replace `[Company Name]` placeholders with actual employers.
-
----
-
-### Competencies
-
-**Source**: `src/data/content.js → competencies[]`
-
-Four categories:
-1. Contract & Legal
-2. Infrastructure & Cloud
-3. Portfolio & Risk
-4. Languages
-
-**Display style**: Plain text list with accent dot markers. No badge pills, no progress bars, no star ratings. Employers know these systems are arbitrary.
-
-**To update**: Add or remove skills as appropriate. Keep each category to 4–6 items for visual balance.
-
----
-
-### Education
-
-**Source**: `src/data/content.js → education[]`
-
-Currently two entries with placeholders:
-1. Juris Doctor — **[PLACEHOLDER: institution + year]**
-2. Undergraduate — **[PLACEHOLDER: degree + institution + year]**
-
-**Display**: Each credential is a card with the abbreviated degree (J.D.) in italic Playfair Display as the visual anchor.
-
-**To update**: Fill in `institution` and `year` fields. Optionally add `honors` (e.g., "Cum Laude", "Law Review").
-
----
-
-### Downloads
-
-Minimal copy — a short CTA paragraph then two action buttons:
-- Download Resume (PDF, links to `/public/Hanna-Dunham-Resume.pdf`)
-- View LinkedIn
-
-**To update**: Add the resume PDF to `/public/` and update `meta.resumeUrl` in `src/data/content.js`.
-
----
-
-### Contact
-
-**To update**: Replace placeholder email and LinkedIn URL in `src/data/content.js → meta`:
+### `meta` — Identity
 
 ```js
-export const meta = {
-  email: 'hanna@example.com',     // ← replace
-  linkedin: 'https://linkedin.com/in/hannadunham', // ← replace
-  resumeUrl: '/Hanna-Dunham-Resume.pdf',            // ← add PDF to /public/
-};
+meta = {
+  name: 'Hanna S. Dunham',
+  credentials: 'J.D.',
+  title: 'Enterprise Contract Governance & Infrastructure Portfolio Analyst',
+  tagline: '...',
+  location: 'United States',
+  email: 'hanna@example.com',     // [PLACEHOLDER — update before launch]
+  linkedin: 'https://...',         // [PLACEHOLDER — update before launch]
+  resumeUrl: '/documents/hanna-dunham-resume.pdf',
+  resumeDocxUrl: '/documents/hanna-dunham-resume.docx',
+}
+```
+
+### `profile` — Executive Summary
+
+One paragraph. Authoritative, third-person. States current employer, core expertise, and differentiators. Should not be a list.
+
+Highlights: 4 key facts shown in the glass card (Current Employer, Specialization, Legal Credential, Languages).
+
+### `experience` — Career Timeline (10 entries)
+
+Each entry:
+
+```js
+{
+  id: 'exp-N',
+  period: 'Month Year — Month Year',
+  company: 'Company Name',
+  subcompany: null,        // or 'Division · Team'
+  role: 'Job Title',
+  location: 'City, ST or United States',
+  description: 'Paragraph describing responsibilities and impact.',
+  tags: ['Tag1', 'Tag2', ...],
+}
+```
+
+**Rendering by tier:**
+- `exp-1` (AWS, index 0): Full description shown. All tags.
+- `exp-2` through `exp-10` (indices 1–9): Role + company + period + 3 tags. Description available in data but not rendered to reduce visual length.
+
+### `competencies` — Capability Framework (5 groups)
+
+```js
+{
+  category: 'Category Name',
+  skills: ['Skill 1', 'Skill 2', ...5 skills],
+}
+```
+
+Rendered via the SVG capability network in `ExperienceExpertise.jsx`. Active category's skills are displayed in the skills panel below the network.
+
+**Category order matters** — index 0 is the hub node (Enterprise Governance) which is active by default. Keep it first.
+
+### `education` — Credentials (2 entries)
+
+```js
+{
+  id: 'edu-N',
+  degree: 'Full Degree Name',
+  abbreviation: 'J.D.',
+  institution: 'University Name',
+  year: null,
+  honors: 'Honors string or null',
+}
 ```
 
 ---
 
-## Launch Checklist
+## Content Rules
 
-- [ ] Replace all `[PLACEHOLDER]` values in `src/data/content.js`
-- [ ] Add resume PDF to `/public/Hanna-Dunham-Resume.pdf`
-- [ ] Confirm email address
-- [ ] Confirm LinkedIn URL
-- [ ] Review executive summary with Hanna
-- [ ] Add headshot to `/public/` if desired (see Hero component for integration point)
-- [ ] Confirm education institutions and years
-- [ ] Verify all job titles match official titles
-- [ ] Add `favicon.svg` to `/public/`
+### Voice
+
+- Third-person, authoritative, precise
+- No filler phrases ("passionate about," "proven track record," "results-driven")
+- No weak qualifiers ("helped with," "assisted in")
+- Strong, active verbs: governs, audits, interprets, delivers, manages, maintains
+- Legal/enterprise register — not casual, not corporate-speak
+
+### Description paragraphs
+
+- One unified paragraph per role (no bullet lists in descriptions)
+- Start with the scope of responsibility, then the specific activities
+- End with the outcome or strategic value where possible
+- AWS description should communicate enterprise scale and legal + financial expertise intersection
+
+### Tags
+
+- 3–8 tags per role
+- Noun phrases, not verb phrases
+- Should be scannable skill signals for a hiring manager
+- Consistent casing: title case for multi-word ("Contract Governance"), lowercase for single words only if conventional
+
+### Competency categories
+
+- Short, precise category names that sound like enterprise frameworks
+- Skills within each category should feel interconnected, not random
+- Each skill should be 2–5 words maximum
+
+---
+
+## Pending Updates Before Launch
+
+| Field | Status | Notes |
+|-------|--------|-------|
+| `meta.email` | PLACEHOLDER | Replace `hanna@example.com` |
+| `meta.linkedin` | PLACEHOLDER | Replace with real LinkedIn URL |
+| Resume PDF | MISSING | Add to `public/documents/hanna-dunham-resume.pdf` |
+| Resume DOCX | MISSING | Add to `public/documents/hanna-dunham-resume.docx` |
+
+---
+
+## Content Sections — Display Notes
+
+### Hero tagline
+
+Short, declarative sentence. Should communicate the intersection of legal + operational + financial expertise. Currently: "Translating legal complexity into operational clarity across enterprise infrastructure environments."
+
+Keep it specific. Avoid abstract corporate phrases.
+
+### Profile summary
+
+The most important paragraph on the page. Should mention AWS by name. Should reference the J.D. and enterprise/infrastructure scale. Should mention bilingual Swedish capability.
+
+### Experience condensation rationale
+
+Older roles (indices 5–9) are condensed to 3 tags and no description in the current UI. This is intentional — the page prioritizes narrative clarity over enumeration. Full descriptions remain in `content.js` for PDF/DOCX resume generation if needed in the future.
+
+The foundation period (2014–2015) roles are still individually listed, preserving the full career trajectory for anyone who explores deeply.

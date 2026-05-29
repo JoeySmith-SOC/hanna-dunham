@@ -2,202 +2,90 @@
 
 ## Implementation Stack
 
-- **Library**: Framer Motion 12 (React integration)
-- **Supplemental**: CSS `@keyframes` for looping effects (scroll indicator)
-- **Reduced motion**: Native `prefers-reduced-motion` via CSS + `useReducedMotion()` hook
+- **Framer Motion 12** — entrance animations, scroll-linked transforms, SVG path draws
+- **CSS transitions** — hover states, color changes, micro-interactions
+- **CSS keyframes** — slow atmospheric loops (grain, orbs, ambient drift)
+- **`requestAnimationFrame`** — mouse-tracking spotlight (bypasses React render cycle)
 
 ---
 
-## Core Patterns
+## Layers
 
-### Pattern 1: Scroll Reveal (Primary)
+### Layer 1: Atmosphere (CSS, always running)
 
-**Component**: `ScrollReveal.jsx`  
-**Used in**: Every section heading, every content block, every card
+Background effects that create environmental depth. Never call attention to themselves.
 
-```jsx
-<ScrollReveal delay={0.1}>
-  <h2>Heading</h2>
-</ScrollReveal>
-```
+| Animation | Element | Duration | Trigger |
+|-----------|---------|----------|---------|
+| `ambientDrift` | Hero gradient layer | 22s alternate | Always (RM-gated) |
+| `orbBreath1` | Hero orb 1 | 18s alternate | Always (RM-gated) |
+| `orbBreath2` | Hero orb 2 | 24s alternate | Always (RM-gated) |
+| `scrollPulse` | Scroll indicator | 2.6s infinite | Always (RM-gated) |
+| Hub orbit ring | SVG `motion.circle` | 66s linear infinite | After network inView (RM-gated) |
 
-**Animation**: `opacity: 0, y: 24` → `opacity: 1, y: 0`  
-**Duration**: `700ms`  
-**Easing**: `[0.25, 0.46, 0.45, 0.94]` (ease-out quart)  
-**Viewport margin**: `-80px` (triggers slightly before fully in view)  
-**Once**: `true` (does not re-animate on scroll-up)
+All wrapped in `@media (prefers-reduced-motion: no-preference)` or guarded by `useReducedMotion()`.
 
----
+### Layer 2: Entrances (Framer Motion, once per session)
 
-### Pattern 2: Staggered Hero Sequence
+Content reveals. Fire once when element enters viewport. Never re-trigger.
 
-**Component**: `Hero.jsx`  
-**Trigger**: Page load (not scroll)
+| Pattern | Used in | Trigger |
+|---------|---------|---------|
+| `y: 24 → 0` + opacity | `ScrollReveal.jsx` | `whileInView`, `once: true` |
+| `y: '115%' → 0` word mask | Hero name | On mount, staggered |
+| `pathLength: 0 → 1` | SVG connections | `useInView`, `once: true` |
+| `scale: 0 → 1` from center | SVG nodes | `useInView`, `once: true` |
+| `scaleX: 0 → 1` | Hero separator | On mount |
+| `scaleY: scroll-linked` | Timeline line | `useScroll` + `useTransform` |
+| `opacity: 0 → 1` | SVG labels | `useInView`, `once: true` |
 
-```jsx
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.4 } },
-};
+### Layer 3: Interactions (CSS transitions, on hover/click)
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
-};
-```
+State changes. Fast, immediate, CSS-managed.
 
-**Stagger order**: label → name → tagline → buttons → scroll indicator
+| Element | Property | Duration |
+|---------|----------|----------|
+| Nav links | underline `scaleX` | 280ms |
+| Buttons | `translateY(-2px)`, box-shadow | 150ms |
+| Tags | color, border-color | 150ms |
+| Timeline entry | `translateX(3px)` | 550ms |
+| Timeline dot | border-color, box-shadow | 550ms |
+| SVG circles | `fill`, `stroke` | 340ms |
+| SVG labels | `fill` | 340ms |
+| Profile highlights | background tint | 280ms |
 
----
+### Layer 4: Content Transitions (Framer Motion AnimatePresence)
 
-### Pattern 3: Scroll-Driven Timeline Line
+Between-state content swaps.
 
-**Component**: `Experience.jsx`  
-**Effect**: Vertical line draws from top to bottom as section enters viewport
-
-```jsx
-const { scrollYProgress } = useScroll({
-  target: sectionRef,
-  offset: ['start 85%', 'end 40%'],
-});
-
-const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-// Applied as:
-<motion.div style={{ scaleY: lineScaleY }} />
-```
-
-**Transform-origin**: `top center`  
-**Character**: Continuous, tied directly to scroll position (not eased).
+| Element | Pattern | Duration |
+|---------|---------|----------|
+| Skills panel (ExperienceExpertise) | `y: 6 → 0`, exit `y: -6`, `mode="wait"` | 220ms |
 
 ---
 
-### Pattern 4: Parallax Depth
+## Reduced Motion Protocol
 
-**Component**: `Hero.jsx`  
-**Effect**: Three document frames drift at different rates as user scrolls
+When `useReducedMotion()` returns `true`:
 
-```js
-const doc1Y = useTransform(scrollY, [0, 700], [0, 70]);   // slow drift down
-const doc2Y = useTransform(scrollY, [0, 700], [0, -45]);  // drift up (opposite)
-const doc3Y = useTransform(scrollY, [0, 700], [0, 90]);   // faster drift down
-```
-
-Content block has a subtle counter-scroll: `[0, 500] → [0, -24]`.
-
-**Note**: All disabled when `useReducedMotion()` returns `true`.
+1. **Hero name words:** `initial="visible"` on container — starts already visible, no y movement
+2. **SVG connections:** `initial={{ pathLength: 1, opacity: 1 }}` — already drawn
+3. **SVG nodes:** `initial={{ scale: 1, opacity: 1 }}` — already at full size
+4. **Orbit ring:** `rotate` animation not applied
+5. **All scroll reveals:** `y: 0` (opacity still fades — non-vestibular)
+6. **Parallax:** Not applied (`style={}` instead of `style={{ y: transformValue }}`)
+7. **Floating elements:** Not rendered (`!prefersReducedMotion` gate)
+8. **CSS keyframes:** Suppressed via `@media` wrappers in component CSS files
 
 ---
 
-### Pattern 5: Mouse-Tracking Spotlight
+## Critical Implementation Rules
 
-**Component**: `Hero.jsx`  
-**Effect**: Radial gradient follows cursor within hero bounds
-
-**Implementation approach**: Direct DOM mutation via CSS custom properties — bypasses React's render cycle entirely:
-
-```js
-useEffect(() => {
-  let raf;
-  const onMouseMove = (e) => {
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      const rect = hero.getBoundingClientRect();
-      hero.style.setProperty('--mx', `${(e.clientX - rect.left) / rect.width * 100}%`);
-      hero.style.setProperty('--my', `${(e.clientY - rect.top) / rect.height * 100}%`);
-    });
-  };
-  hero.addEventListener('mousemove', onMouseMove, { passive: true });
-  return () => hero.removeEventListener('mousemove', onMouseMove);
-}, []);
-```
-
-**CSS consumer**:
-```css
-.gradientMouseSpotlight {
-  background: radial-gradient(
-    ellipse 55% 45% at var(--mx) var(--my),
-    rgba(212, 168, 67, 0.07),
-    transparent 65%
-  );
-}
-```
-
----
-
-### Pattern 6: Navigation Appearance
-
-**Component**: `Navigation.jsx`  
-**Effect**: Nav fades in on mount; gains frosted glass on scroll
-
-Mount animation: `motion.nav` with `initial={{ opacity: 0, y: -8 }}` → `animate={{ opacity: 1, y: 0 }}`, `delay: 0.2s`.
-
-Scroll state: CSS class swap (`scrolled`) — adds `backdrop-filter: blur(16px)` and `background: rgba(9,9,11,0.88)`.
-
----
-
-### Pattern 7: Mobile Drawer
-
-**Component**: `Navigation.jsx`  
-**Effect**: Slides in from right on open, slides out on close
-
-```jsx
-<motion.div
-  initial={{ x: '100%' }}
-  animate={{ x: 0 }}
-  exit={{ x: '100%' }}
-  transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-/>
-```
-
-Wrapped in `AnimatePresence` for exit animation support.
-
----
-
-### Pattern 8: CSS Scroll Indicator
-
-**Component**: `Hero.jsx`  
-**Effect**: Looping line that grows and fades — suggests scrolling
-
-```css
-@keyframes scrollPulse {
-  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
-  30%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
-  70%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
-  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
-}
-```
-
-Duration: `2.2s infinite`. Uses CSS, not Framer Motion (no React overhead for a looping effect).
-
----
-
-## Hover Interactions
-
-| Element | Effect | Duration |
-|---------|--------|----------|
-| Primary button | `translateY(-2px)` + lighter bg | `150ms` |
-| Ghost button | `translateY(-2px)` + brighter border | `150ms` |
-| Nav links | Underline `scaleX` 0→1 | `280ms` |
-| Monogram | Border color + bg tint | `150ms` |
-| Experience tags | Border + text color | `150ms` |
-| Education cards | Border color shift | `280ms` |
-| Contact rows | Background tint | `150ms` |
-
-All hover effects use `var(--ease-out)`. No spring on hover — spring is for click confirmations only (not used here).
-
----
-
-## Decision Rules
-
-**When to animate:**
-- When the user needs to understand that content has arrived
-- When motion reinforces the content hierarchy
-- When the interaction has a beginning and end state
-
-**When NOT to animate:**
-- On elements that are always visible (no scroll reveal for nav or hero content structure)
-- When the motion would repeat annoyingly (looping effects only on scroll indicator)
-- When the user has expressed motion preference
-
-**The 3-second rule**: If removing an animation makes the site feel broken or incomplete, it belongs. If removing it makes no difference, it doesn't belong.
+1. **Never animate layout properties.** Only `transform` and `opacity`.
+2. **SVG active states use CSS transitions, not Framer Motion** — prevents entrance animation from re-firing when user hovers a node.
+3. **`will-change: background`** only on the mouse spotlight element.
+4. **`useTransform` for parallax** — Framer Motion runs this on a separate thread.
+5. **`AnimatePresence mode="wait"`** for content panels — prevents flash of overlapping content.
+6. **No spring easing** (`--ease-spring`) on page load sequences — spring implies playfulness. Cinema easing only for hero.
+7. **Maximum simultaneous motion budget:** 4–5 animated elements at any given time.
+8. **`whileInView` with `once: true`** — never re-animate on scroll-up.
