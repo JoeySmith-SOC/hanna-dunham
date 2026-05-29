@@ -3,9 +3,23 @@
   padding-bottom: var(--sp-section);
   border-top: 1px solid var(--c-border-subtle);
   background: var(--c-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle background atmosphere for the section */
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(212, 168, 67, 0.025) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(99, 102, 241, 0.015) 0%, transparent 65%);
+  pointer-events: none;
 }
 
 .container {
+  position: relative;
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 var(--container-padding);
@@ -34,77 +48,151 @@
   color: var(--c-text);
 }
 
-/* ── Competencies grid ── */
+/* ── Cards grid ── */
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 40px 28px;
+  gap: 16px;
 }
 
-/* ── Category group ── */
-.group {
-  /* natural block flow */
+/* ── Single capability card ── */
+.card {
+  position: relative;
+  background: var(--c-glass);
+  border: 1px solid var(--c-glass-border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px 32px;
+  overflow: hidden;
+  transition:
+    border-color 360ms var(--ease-out),
+    transform 360ms var(--ease-out),
+    box-shadow 360ms var(--ease-out);
+}
+
+/* Hover illumination — gold radial glow from top */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 130% 90% at 50% -10%,
+    rgba(212, 168, 67, 0.08) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+  pointer-events: none;
+}
+
+/* Hover state */
+.card:hover {
+  border-color: var(--c-glass-border-hover);
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(212, 168, 67, 0.05) inset,
+    0 -1px 0 0 rgba(212, 168, 67, 0.12) inset;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* ── Card top: index + category name ── */
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--c-border-subtle);
+}
+
+.cardIndex {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--c-accent);
+  opacity: 0.55;
+  padding-top: 3px;
+  min-width: 18px;
+  flex-shrink: 0;
 }
 
 .category {
-  font-size: var(--fs-label);
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--c-text-muted);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--c-border);
+  line-height: 1.45;
+  margin: 0;
 }
 
 /* ── Skill list ── */
 .skills {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .skill {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: var(--fs-small);
+  font-size: 13px;
   font-weight: 300;
   color: var(--c-text-secondary);
-  line-height: 1.4;
-  transition: color var(--dur-fast) var(--ease-out);
+  line-height: 1.35;
+  transition:
+    color var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
 }
 
 .skill:hover {
   color: var(--c-text);
+  transform: translateX(3px);
 }
 
-.skillDot {
+/* Short editorial dash instead of dot — more refined */
+.skillLine {
   flex-shrink: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  width: 14px;
+  height: 1px;
   background: var(--c-accent);
-  opacity: 0.6;
+  opacity: 0.35;
+  transition:
+    width var(--dur-slow) var(--ease-out),
+    opacity var(--dur-slow) var(--ease-out);
+}
+
+.skill:hover .skillLine {
+  width: 20px;
+  opacity: 0.75;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px 24px;
+    gap: 12px;
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 24px 20px 28px;
   }
 }

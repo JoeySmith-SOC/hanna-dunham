@@ -16,19 +16,29 @@ export default function Competencies() {
           </ScrollReveal>
         </div>
 
-        {/* Grid of categories */}
+        {/* Card grid */}
         <div className={styles.grid}>
           {competencies.map((group, i) => (
-            <ScrollReveal key={group.category} delay={i * 0.09} className={styles.group}>
-              <h3 className={styles.category}>{group.category}</h3>
-              <ul className={styles.skills} role="list">
-                {group.skills.map((skill) => (
-                  <li key={skill} className={styles.skill}>
-                    <span className={styles.skillDot} aria-hidden="true" />
-                    {skill}
-                  </li>
-                ))}
-              </ul>
+            <ScrollReveal key={group.category} delay={i * 0.08} fromY={20}>
+              <article className={styles.card}>
+                {/* Top: index + category */}
+                <div className={styles.cardTop}>
+                  <span className={styles.cardIndex} aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className={styles.category}>{group.category}</h3>
+                </div>
+
+                {/* Skill list */}
+                <ul className={styles.skills} role="list">
+                  {group.skills.map((skill) => (
+                    <li key={skill} className={styles.skill}>
+                      <span className={styles.skillLine} aria-hidden="true" />
+                      {skill}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </ScrollReveal>
           ))}
         </div>

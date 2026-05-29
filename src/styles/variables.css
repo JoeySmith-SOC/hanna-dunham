@@ -31,18 +31,30 @@
   --fs-label: 11px;
 
   /* ── Spacing ── */
-  --sp-section: clamp(80px, 12vw, 140px);
-  --sp-component: clamp(40px, 6vw, 64px);
+  --sp-section: clamp(96px, 13vw, 160px);
+  --sp-component: clamp(44px, 6vw, 72px);
   --sp-content: 24px;
 
   /* ── Layout ── */
   --container-max: 1120px;
   --container-padding: clamp(20px, 5vw, 64px);
 
+  /* ── Color: Glass surfaces ── */
+  --c-glass: rgba(255, 255, 255, 0.025);
+  --c-glass-raised: rgba(255, 255, 255, 0.04);
+  --c-glass-border: rgba(255, 255, 255, 0.065);
+  --c-glass-border-hover: rgba(212, 168, 67, 0.22);
+
+  /* ── Color: Glow ── */
+  --c-gold-glow: rgba(212, 168, 67, 0.12);
+  --c-gold-glow-strong: rgba(212, 168, 67, 0.22);
+
   /* ── Animation ── */
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-in-out: cubic-bezier(0.45, 0.05, 0.55, 0.95);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-entrance: cubic-bezier(0.4, 0, 0, 1);
 
   --dur-fast: 150ms;
   --dur-base: 280ms;

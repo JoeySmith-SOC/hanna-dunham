@@ -3,21 +3,18 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import { meta } from '../data/content';
 import styles from './Hero.module.css';
 
-const ease = [0.25, 0.46, 0.45, 0.94];
+const easeCinema = [0.16, 1, 0.3, 1];
+const easeStd = [0.25, 0.46, 0.45, 0.94];
 
-const containerVariants = {
+// Cinematic word mask reveal
+const nameContainerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.4 } },
+  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.5 } },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
-};
-
-const labelVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+const wordVariants = {
+  hidden: { y: '115%' },
+  visible: { y: 0, transition: { duration: 1.05, ease: easeCinema } },
 };
 
 export default function Hero() {
@@ -25,14 +22,14 @@ export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
-  // Parallax transforms for floating document frames
   const doc1Y = useTransform(scrollY, [0, 700], [0, 70]);
   const doc2Y = useTransform(scrollY, [0, 700], [0, -45]);
   const doc3Y = useTransform(scrollY, [0, 700], [0, 90]);
   const doc4Y = useTransform(scrollY, [0, 700], [0, -30]);
+  const orb1Y = useTransform(scrollY, [0, 700], [0, 55]);
+  const orb2Y = useTransform(scrollY, [0, 700], [0, -40]);
   const contentY = useTransform(scrollY, [0, 500], [0, -24]);
 
-  // Mouse-tracking spotlight — updates CSS custom property directly on DOM (no React re-render)
   useEffect(() => {
     if (prefersReducedMotion) return;
     const hero = heroRef.current;
@@ -57,6 +54,8 @@ export default function Hero() {
     };
   }, [prefersReducedMotion]);
 
+  const nameWords = meta.name.split(' ');
+
   return (
     <section
       ref={heroRef}
@@ -65,70 +64,142 @@ export default function Hero() {
       aria-label="Introduction"
       style={{ '--mx': '50%', '--my': '0%' }}
     >
-      {/* Background layers */}
+      {/* ── Background atmosphere ── */}
       <div className={styles.gradientBase} aria-hidden="true" />
       <div className={styles.ambientLayer} aria-hidden="true" />
       <div className={styles.gradientMouseSpotlight} aria-hidden="true" />
       <div className={styles.gridOverlay} aria-hidden="true" />
+
+      {/* ── Atmospheric depth orbs ── */}
+      {!prefersReducedMotion && (
+        <>
+          <motion.div className={styles.orb1} style={{ y: orb1Y }} aria-hidden="true" />
+          <motion.div className={styles.orb2} style={{ y: orb2Y }} aria-hidden="true" />
+        </>
+      )}
+
       <div className={styles.bottomVignette} aria-hidden="true" />
 
-      {/* Floating document frames — decorative, parallax */}
+      {/* ── Floating document frames ── */}
       {!prefersReducedMotion && (
         <div aria-hidden="true">
           <motion.div
             className={`${styles.docFrame} ${styles.doc1}`}
             style={{ y: doc1Y }}
+            initial={{ opacity: 0, scale: 0.93 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.8, delay: 0.85, ease: easeStd }}
           >
+            <div className={styles.docHeader} />
             <div className={styles.docInnerLines} />
+            <div className={styles.docTag}>INF-2024</div>
           </motion.div>
+
           <motion.div
             className={`${styles.docFrame} ${styles.doc2}`}
             style={{ y: doc2Y }}
+            initial={{ opacity: 0, scale: 0.93 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.8, delay: 1.15, ease: easeStd }}
           >
+            <div className={styles.docHeader} />
             <div className={styles.docInnerLines} />
           </motion.div>
+
           <motion.div
             className={`${styles.docFrame} ${styles.doc3}`}
             style={{ y: doc3Y }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.32 }}
+            transition={{ duration: 1.4, delay: 1.45, ease: easeStd }}
           />
+
           <motion.div
             className={`${styles.docFrame} ${styles.doc4}`}
             style={{ y: doc4Y }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.22 }}
+            transition={{ duration: 1.4, delay: 1.7, ease: easeStd }}
           >
             <div className={styles.docInnerLines} />
           </motion.div>
         </div>
       )}
 
-      {/* Hero content */}
+      {/* ── Hero content ── */}
       <motion.div
         className={styles.content}
         style={prefersReducedMotion ? {} : { y: contentY }}
       >
-        <motion.div
-          className={styles.textStack}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className={styles.textStack}>
+
           {/* Section label */}
-          <motion.span variants={labelVariants} className={styles.label}>
+          <motion.span
+            className={styles.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.3, ease: easeStd }}
+          >
             Enterprise Contract Governance
           </motion.span>
 
-          {/* Name + credential */}
-          <motion.div variants={itemVariants}>
-            <h1 className={styles.name}>{meta.name}</h1>
-            <p className={styles.credential}>{meta.credentials}</p>
-          </motion.div>
+          {/* Name — cinematic title card reveal */}
+          <div className={styles.nameBlock}>
+            <h1 className={styles.name} aria-label={meta.name}>
+              <motion.span
+                className={styles.nameWordRow}
+                variants={nameContainerVariants}
+                initial={prefersReducedMotion ? 'visible' : 'hidden'}
+                animate="visible"
+                aria-hidden="true"
+              >
+                {nameWords.map((word, i) => (
+                  <span key={i} className={styles.wordMask}>
+                    <motion.span className={styles.wordInner} variants={wordVariants}>
+                      {word}
+                    </motion.span>
+                  </span>
+                ))}
+              </motion.span>
+            </h1>
+
+            <motion.p
+              className={styles.credential}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.3, ease: easeStd }}
+            >
+              {meta.credentials}
+            </motion.p>
+          </div>
+
+          {/* Self-drawing separator */}
+          <motion.div
+            className={styles.separator}
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 1.15, delay: 1.5, ease: easeCinema }}
+            style={{ transformOrigin: 'left center' }}
+            aria-hidden="true"
+          />
 
           {/* Tagline */}
-          <motion.p variants={itemVariants} className={styles.tagline}>
+          <motion.p
+            className={styles.tagline}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.62, ease: easeStd }}
+          >
             {meta.tagline}
           </motion.p>
 
           {/* CTAs */}
-          <motion.div variants={itemVariants} className={styles.actions}>
+          <motion.div
+            className={styles.actions}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.82, ease: easeStd }}
+          >
             <a href="#profile" className={styles.primaryBtn}>
               View Profile
             </a>
@@ -139,7 +210,7 @@ export default function Hero() {
               Contact
             </a>
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* Scroll indicator */}
@@ -147,7 +218,7 @@ export default function Hero() {
         className={styles.scrollIndicator}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.9, ease }}
+        transition={{ delay: 2.3, duration: 0.9, ease: easeStd }}
         aria-hidden="true"
       >
         <div className={styles.scrollLine} />

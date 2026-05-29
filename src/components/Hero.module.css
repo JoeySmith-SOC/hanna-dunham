@@ -11,21 +11,21 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 140% 70% at 50% -10%, rgba(212, 168, 67, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 160% 70% at 50% -8%, rgba(212, 168, 67, 0.13) 0%, transparent 58%),
     radial-gradient(ellipse 70% 70% at 92% 95%, rgba(99, 102, 241, 0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 60% at 8% 70%, rgba(212, 168, 67, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 40% at 78% 15%, rgba(212, 168, 67, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse 55% 60% at 8% 72%, rgba(212, 168, 67, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 45% at 80% 14%, rgba(212, 168, 67, 0.06) 0%, transparent 50%);
   z-index: 0;
 }
 
-/* ── Slow ambient drift layer — adds atmospheric depth ── */
+/* ── Slow ambient drift layer ── */
 .ambientLayer {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 110% 65% at 35% 45%,
-    rgba(212, 168, 67, 0.045) 0%,
-    transparent 60%
+    ellipse 120% 70% at 30% 45%,
+    rgba(212, 168, 67, 0.05) 0%,
+    transparent 62%
   );
   z-index: 0;
   pointer-events: none;
@@ -33,22 +33,71 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .ambientLayer {
-    animation: ambientDrift 20s ease-in-out infinite alternate;
+    animation: ambientDrift 22s ease-in-out infinite alternate;
   }
 }
 
 @keyframes ambientDrift {
-  0%   { transform: translate(0, 0) scale(1);    opacity: 0.6; }
-  100% { transform: translate(8%, 4%) scale(1.08); opacity: 1; }
+  0%   { transform: translate(0, 0) scale(1);      opacity: 0.6; }
+  100% { transform: translate(7%, 4%) scale(1.09); opacity: 1; }
 }
 
-/* ── Mouse-tracking spotlight — reads --mx and --my from JS ── */
+/* ── Atmospheric depth orbs ── */
+.orb1 {
+  position: absolute;
+  width: 640px;
+  height: 640px;
+  top: -160px;
+  right: -80px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 168, 67, 0.055) 0%,
+    rgba(212, 168, 67, 0.02) 40%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  z-index: 0;
+  pointer-events: none;
+  animation: orbBreath1 18s ease-in-out infinite alternate;
+}
+
+.orb2 {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  bottom: 5%;
+  left: -60px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(99, 102, 241, 0.04) 0%,
+    rgba(212, 168, 67, 0.025) 40%,
+    transparent 70%
+  );
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  animation: orbBreath2 24s ease-in-out infinite alternate;
+}
+
+@keyframes orbBreath1 {
+  0%   { transform: scale(1) translate(0, 0);       opacity: 0.7; }
+  100% { transform: scale(1.12) translate(-4%, 3%); opacity: 1; }
+}
+
+@keyframes orbBreath2 {
+  0%   { transform: scale(1) translate(0, 0);      opacity: 0.6; }
+  100% { transform: scale(1.1) translate(5%, -4%); opacity: 1; }
+}
+
+/* ── Mouse-tracking spotlight ── */
 .gradientMouseSpotlight {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 60% 50% at var(--mx) var(--my),
-    rgba(212, 168, 67, 0.08),
+    ellipse 55% 48% at var(--mx) var(--my),
+    rgba(212, 168, 67, 0.09),
     transparent 65%
   );
   z-index: 0;
@@ -56,16 +105,16 @@
   will-change: background;
 }
 
-/* ── Subtle grid pattern ── */
+/* ── Subtle precision grid ── */
 .gridOverlay {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, black 20%, transparent 85%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, black 20%, transparent 85%);
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 45%, black 15%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 45%, black 15%, transparent 85%);
   z-index: 0;
   pointer-events: none;
 }
@@ -76,7 +125,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 180px;
+  height: 200px;
   background: linear-gradient(to bottom, transparent, var(--c-bg));
   z-index: 0;
   pointer-events: none;
@@ -85,64 +134,104 @@
 /* ── Floating document frames ── */
 .docFrame {
   position: absolute;
-  border: 1px solid rgba(212, 168, 67, 0.08);
+  border: 1px solid rgba(212, 168, 67, 0.09);
   border-radius: var(--radius-sm);
-  background: rgba(212, 168, 67, 0.016);
+  background: rgba(212, 168, 67, 0.014);
   z-index: 0;
   pointer-events: none;
-  backdrop-filter: blur(0.5px);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
 }
 
+/* Doc frame internal header bar */
+.docHeader {
+  height: 24px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.07);
+  background: rgba(212, 168, 67, 0.02);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 5px;
+}
+
+.docHeader::before,
+.docHeader::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(212, 168, 67, 0.18);
+}
+
+.docHeader::after {
+  width: 24px;
+  border-radius: 2px;
+  margin-left: 4px;
+}
+
+/* Doc internal ruled lines */
 .docInnerLines {
   position: absolute;
-  inset: 20px 24px;
+  inset: 28px 20px 20px;
   background-image: repeating-linear-gradient(
     transparent,
-    transparent 19px,
-    rgba(255, 255, 255, 0.028) 19px,
-    rgba(255, 255, 255, 0.028) 20px
+    transparent 18px,
+    rgba(255, 255, 255, 0.026) 18px,
+    rgba(255, 255, 255, 0.026) 19px
   );
 }
 
-/* Document frame 1 — top right */
+/* Doc tag label */
+.docTag {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-family: var(--font-body);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(212, 168, 67, 0.3);
+}
+
+/* Document frame 1 — top right, primary */
 .doc1 {
-  width: 192px;
-  height: 256px;
-  top: 12%;
-  right: 8%;
-  transform: rotate(7deg);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(212, 168, 67, 0.06);
+  width: 200px;
+  height: 268px;
+  top: 11%;
+  right: 7%;
+  transform: rotate(6.5deg);
+  box-shadow:
+    0 28px 72px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(212, 168, 67, 0.07);
 }
 
 /* Document frame 2 — bottom left */
 .doc2 {
-  width: 152px;
-  height: 208px;
-  bottom: 16%;
-  left: 6%;
-  transform: rotate(-5deg);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  width: 158px;
+  height: 214px;
+  bottom: 15%;
+  left: 5.5%;
+  transform: rotate(-5.5deg);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.38);
 }
 
 /* Document frame 3 — mid right, accent */
 .doc3 {
-  width: 88px;
-  height: 116px;
-  top: 60%;
-  right: 22%;
-  transform: rotate(2deg);
-  opacity: 0.4;
+  width: 90px;
+  height: 118px;
+  top: 58%;
+  right: 21%;
+  transform: rotate(2.5deg);
 }
 
 /* Document frame 4 — upper left, deep background */
 .doc4 {
-  width: 110px;
-  height: 144px;
-  top: 20%;
-  left: 18%;
-  transform: rotate(-3deg);
-  opacity: 0.3;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  width: 112px;
+  height: 148px;
+  top: 19%;
+  left: 17%;
+  transform: rotate(-2.5deg);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Hero content ── */
@@ -152,11 +241,11 @@
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 120px var(--container-padding) 100px;
+  padding: 130px var(--container-padding) 110px;
 }
 
 .textStack {
-  max-width: 740px;
+  max-width: 760px;
 }
 
 /* ── Label ── */
@@ -165,13 +254,19 @@
   font-family: var(--font-body);
   font-size: var(--fs-label);
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-accent);
-  margin-bottom: 36px;
+  margin-bottom: 40px;
+  opacity: 0.85;
 }
 
-/* ── Name ── */
+/* ── Name block ── */
+.nameBlock {
+  margin-bottom: 28px;
+}
+
+/* ── Name — title card container ── */
 .name {
   font-family: var(--font-display);
   font-size: var(--fs-hero);
@@ -179,29 +274,60 @@
   line-height: 1.0;
   letter-spacing: -0.01em;
   color: var(--c-text);
-  margin: 0;
+  margin: 0 0 12px 0;
+  overflow: visible;
 }
 
+/* Flex row for word masks */
+.nameWordRow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.25em;
+}
+
+/* Per-word overflow clip */
+.wordMask {
+  display: inline-block;
+  overflow: hidden;
+  /* small bottom padding prevents clipping ascenders on reveal */
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.wordInner {
+  display: inline-block;
+}
+
+/* ── Credential ── */
 .credential {
   font-family: var(--font-display);
-  font-size: clamp(18px, 2.5vw, 30px);
+  font-size: clamp(17px, 2.4vw, 28px);
   font-weight: 400;
   font-style: italic;
   color: var(--c-accent);
-  margin: 8px 0 32px 0;
+  margin: 0;
   letter-spacing: 0;
-  opacity: 0.9;
+  opacity: 0.88;
+}
+
+/* ── Separator ── */
+.separator {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, var(--c-accent), rgba(212, 168, 67, 0.2));
+  margin-bottom: 32px;
 }
 
 /* ── Tagline ── */
 .tagline {
   font-family: var(--font-body);
-  font-size: clamp(15px, 1.85vw, 19px);
+  font-size: clamp(15px, 1.8vw, 19px);
   font-weight: 300;
-  line-height: 1.75;
+  line-height: 1.8;
   color: var(--c-text-secondary);
   margin: 0 0 56px 0;
-  max-width: 560px;
+  max-width: 540px;
 }
 
 /* ── Actions ── */
@@ -221,33 +347,36 @@
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
   transition:
     background var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .primaryBtn:hover {
   background: var(--c-accent-hover);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 168, 67, 0.3);
 }
 
 .primaryBtn:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 .ghostBtn {
   display: inline-flex;
   align-items: center;
   padding: 14px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--c-text-secondary);
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
   transition:
@@ -257,7 +386,7 @@
 }
 
 .ghostBtn:hover {
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.26);
   color: var(--c-text);
   transform: translateY(-2px);
 }
@@ -287,13 +416,13 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .scrollLine {
-    animation: scrollPulse 2.4s ease-in-out infinite;
+    animation: scrollPulse 2.6s ease-in-out infinite;
   }
 }
 
 @keyframes scrollPulse {
-  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
-  30%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  0%   { transform: scaleY(0); transform-origin: top;    opacity: 0; }
+  30%  { transform: scaleY(1); transform-origin: top;    opacity: 1; }
   70%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
   100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
 }
@@ -301,13 +430,17 @@
 .scrollText {
   font-family: var(--font-body);
   font-size: 10px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-text-muted);
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
+  .orb1 {
+    width: 480px;
+    height: 480px;
+  }
   .doc4 {
     display: none;
   }
@@ -317,15 +450,29 @@
   .doc1,
   .doc2,
   .doc3,
-  .doc4 {
+  .doc4,
+  .orb1,
+  .orb2 {
     display: none;
   }
 }
 
 @media (max-width: 600px) {
   .content {
-    padding-top: 100px;
-    padding-bottom: 80px;
+    padding-top: 108px;
+    padding-bottom: 88px;
+  }
+
+  .label {
+    margin-bottom: 32px;
+  }
+
+  .separator {
+    margin-bottom: 24px;
+  }
+
+  .tagline {
+    margin-bottom: 44px;
   }
 
   .actions {
