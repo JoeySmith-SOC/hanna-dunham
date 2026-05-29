@@ -1,15 +1,17 @@
-/* ──────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
    EDUCATION — The Foundation Hall
 
-   Design intent: the user feels they are entering the
-   institutional space that shaped Hanna's analytical and
-   legal capabilities. Atmospheric, symmetrical, timeless.
-────────────────────────────────────────────────────── */
+   Visual intent: user walks into an illuminated academic
+   hall. Gold light blooms from a high window. Perspective
+   floor grid establishes architectural depth. Two degree
+   pillars rise and illuminate. A pathway traces the
+   intellectual journey: Philosophy → Law → Governance.
+   ══════════════════════════════════════════════════════════ */
 
 .section {
   position: relative;
-  padding-top: clamp(88px, 12vw, 160px);
-  padding-bottom: clamp(88px, 12vw, 160px);
+  padding-top: clamp(96px, 13vw, 180px);
+  padding-bottom: clamp(80px, 10vw, 140px);
   border-top: 1px solid var(--c-border-subtle);
   background: var(--c-bg);
   overflow: hidden;
@@ -20,55 +22,97 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 0;
 }
 
-/* Diffuse gold light — wide, low opacity, from center-top */
-.atmosphereOuter {
+/* Wide diffuse ambient glow from center-top — the "hall illumination" */
+.glowOuter {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 90% 55% at 50% 0%,
-    rgba(212, 168, 67, 0.075) 0%,
-    rgba(212, 168, 67, 0.025) 45%,
+    ellipse 100% 65% at 50% 0%,
+    rgba(212, 168, 67, 0.1) 0%,
+    rgba(212, 168, 67, 0.04) 45%,
     transparent 72%
   );
 }
 
-/* Concentrated light source — the "window above" */
-.atmosphereCore {
+/* Concentrated bright source — the high window */
+.glowCore {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 38% 28% at 50% 5%,
-    rgba(212, 168, 67, 0.1) 0%,
-    rgba(212, 168, 67, 0.03) 50%,
-    transparent 75%
+    ellipse 44% 32% at 50% 4%,
+    rgba(212, 168, 67, 0.14) 0%,
+    rgba(212, 168, 67, 0.04) 55%,
+    transparent 78%
   );
 }
 
+/* Continuous ambient breathing — very slow, almost imperceptible */
 @media (prefers-reduced-motion: no-preference) {
-  .atmosphereCore {
-    animation: coreBreath 14s ease-in-out infinite alternate;
+  .glowCore {
+    animation: hallBreath 12s ease-in-out infinite alternate;
   }
 }
 
-@keyframes coreBreath {
-  0%   { opacity: 0.7; transform: scaleX(1)    scaleY(1); }
-  100% { opacity: 1;   transform: scaleX(1.06) scaleY(1.08); }
+@keyframes hallBreath {
+  0%   { opacity: 0.75; transform: scale(1); }
+  100% { opacity: 1;    transform: scale(1.07) translateY(-3%); }
 }
 
-/* Perspective SVG — fills lower 60% of section */
+/* Perspective floor grid SVG — lower 65% of section */
 .perspectiveSvg {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 65%;
+  height: 68%;
   display: block;
 }
 
-/* ── Content layer ── */
+/* Subtle shimmer on the entire grid */
+@media (prefers-reduced-motion: no-preference) {
+  .perspectiveSvg {
+    animation: gridShimmer 9s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes gridShimmer {
+  0%   { opacity: 0.65; }
+  100% { opacity: 1;    }
+}
+
+/* Architectural column lines — flank the section */
+.archColumn {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent          0%,
+    rgba(212, 168, 67, 0.22) 8%,
+    rgba(212, 168, 67, 0.18) 50%,
+    rgba(212, 168, 67, 0.1)  80%,
+    transparent          100%
+  );
+}
+
+/* Shimmer on column lines */
+@media (prefers-reduced-motion: no-preference) {
+  .archColumn {
+    animation: columnShimmer 7s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes columnShimmer {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1;   }
+}
+
+/* ── Content ── */
 .container {
   position: relative;
   z-index: 1;
@@ -80,7 +124,7 @@
 /* ── Section header ── */
 .header {
   text-align: center;
-  margin-bottom: clamp(40px, 6vw, 64px);
+  margin-bottom: clamp(44px, 6vw, 72px);
 }
 
 .sectionLabel {
@@ -102,216 +146,284 @@
   color: var(--c-text);
 }
 
-/* ── Architectural beam — horizontal rule with center ornament ── */
+/* ── Architectural beams ── */
 .beam {
   position: relative;
   height: 1px;
   background: linear-gradient(
     to right,
-    transparent 0%,
-    rgba(212, 168, 67, 0.1) 12%,
-    rgba(212, 168, 67, 0.35) 45%,
-    rgba(212, 168, 67, 0.35) 55%,
-    rgba(212, 168, 67, 0.1) 88%,
-    transparent 100%
+    transparent  0%,
+    rgba(212, 168, 67, 0.1)  10%,
+    rgba(212, 168, 67, 0.42) 45%,
+    rgba(212, 168, 67, 0.42) 55%,
+    rgba(212, 168, 67, 0.1)  90%,
+    transparent  100%
   );
   margin: 0;
 }
 
-/* Ornamental diamond at center */
+/* Diamond ornament at center of each beam */
 .beam::after {
   content: '';
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 5px;
-  height: 5px;
-  background: rgba(212, 168, 67, 0.55);
+  width: 6px;
+  height: 6px;
+  background: rgba(212, 168, 67, 0.6);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-/* ── Degree pair ── */
+/* ── Degree pair grid ── */
 .degreePair {
   display: grid;
-  /* J.D. (primary) | central separator | Philosophy (foundation) */
+  /* J.D. (DOM-first) | separator | Philosophy */
   grid-template-columns: 1fr auto 1fr;
-  gap: 0 clamp(36px, 6vw, 88px);
-  align-items: center;
-  padding: clamp(48px, 7vw, 88px) 0;
+  gap: 0 clamp(28px, 5vw, 72px);
+  align-items: stretch;
+  padding: clamp(52px, 8vw, 100px) 0;
+}
+
+/* CSS order: Philosophy pillar appears LEFT of J.D. on desktop */
+.pillarFoundation {
+  order: -1;
 }
 
 /* Central vertical separator */
 .centralSep {
   width: 1px;
-  height: clamp(180px, 22vw, 280px);
   background: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgba(212, 168, 67, 0.28) 25%,
-    rgba(212, 168, 67, 0.38) 50%,
-    rgba(212, 168, 67, 0.28) 75%,
-    transparent 100%
+    transparent  0%,
+    rgba(212, 168, 67, 0.32) 18%,
+    rgba(212, 168, 67, 0.44) 50%,
+    rgba(212, 168, 67, 0.32) 82%,
+    transparent  100%
   );
-  flex-shrink: 0;
+  min-height: 240px;
+  align-self: stretch;
 }
 
-/* ── Degree inscription ── */
-.degree {
-  /* natural block flow */
+/* ── Degree pillar cards ── */
+.pillar {
+  position: relative;
+  padding: clamp(36px, 5vw, 56px) clamp(28px, 4vw, 48px);
+  background: var(--c-glass);
+  border: 1px solid var(--c-glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: default;
+  transition:
+    border-color 420ms var(--ease-out),
+    box-shadow   420ms var(--ease-out),
+    transform    380ms var(--ease-out);
 }
 
-/* B.A. Philosophy: displayed LEFT on desktop — CSS order puts it before J.D. */
-.degreeFoundation {
-  order: -1;      /* appears left of J.D. in the grid */
-  text-align: right;
+/* Primary (J.D.) gets a subtly more visible treatment */
+.pillarPrimary {
+  border-color: rgba(212, 168, 67, 0.12);
 }
 
-/* Align degreeDivider to right edge in right-aligned block */
-.degreeFoundation .degreeDivider {
-  margin-left: auto;
-  margin-right: 0;
+.pillarPrimary:hover {
+  border-color: rgba(212, 168, 67, 0.4);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.38),
+    0  0  40px rgba(212, 168, 67, 0.07),
+    inset 0 1px 0 rgba(212, 168, 67, 0.15);
 }
 
-/* Abbreviation label */
-.degreeAbbrev {
+.pillarFoundation:hover {
+  border-color: rgba(212, 168, 67, 0.28);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.3),
+    0  0  24px rgba(212, 168, 67, 0.05);
+}
+
+/* Gold top-edge accent line on primary pillar */
+.pillarPrimary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(212, 168, 67, 0.55),
+    transparent
+  );
+}
+
+/* Light sweep element — injected by React on hover */
+.lightSweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 168, 67, 0.04),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Pillar typography ── */
+.pillarAbbrev {
   display: block;
-  font-family: var(--font-body);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--c-accent);
-  opacity: 0.55;
-  margin-bottom: 14px;
+  opacity: 0.6;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Degree title — monumental inscription */
-.degreeTitle {
+.pillarTitle {
   font-family: var(--font-display);
-  font-size: clamp(20px, 2.8vw, 34px);
+  font-size: clamp(22px, 3vw, 38px);
   font-weight: 400;
-  line-height: 1.18;
-  letter-spacing: 0.025em;
-  color: var(--c-text);
+  line-height: 1.16;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  margin: 0 0 22px 0;
+  color: var(--c-text);
+  margin: 0 0 24px 0;
+  position: relative;
+  z-index: 1;
 }
 
-.degreePrimary .degreeTitle {
+.pillarPrimary .pillarTitle {
   color: #fff;
 }
 
-/* Short gold rule beneath title */
-.degreeDivider {
+/* Gold rule beneath title */
+.pillarRule {
   display: block;
-  width: 36px;
+  width: 44px;
   height: 1px;
   background: var(--c-accent);
-  opacity: 0.45;
-  margin-bottom: 20px;
+  opacity: 0.5;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
 }
 
-/* J.D. honors — primary (Cum Laude) */
-.honorPrimary {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+.pillarHonorPrimary {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--c-accent);
   margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 
-/* J.D. honors — secondary (Litigation Concentration, Dean's List, etc.) */
-.honorSecondary {
-  font-size: 11px;
+.pillarHonorSecondary {
+  font-size: 11.5px;
   font-weight: 300;
   color: var(--c-text-muted);
-  line-height: 1.65;
-  margin-bottom: 20px;
+  line-height: 1.7;
+  margin-bottom: 22px;
   max-width: 340px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Institution name */
-.degreeInstitution {
-  font-size: 12.5px;
+.pillarInstitution {
+  font-size: 13px;
   font-weight: 400;
   color: var(--c-text-secondary);
   line-height: 1.55;
   letter-spacing: 0.01em;
+  position: relative;
+  z-index: 1;
 }
 
-/* Philosophy subdescription */
-.foundationNote {
-  font-size: 11px;
+.pillarNote {
+  font-size: 12px;
   font-weight: 300;
   font-style: italic;
   color: var(--c-text-muted);
   margin-top: 14px;
   letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Pathway: Philosophy → Law → Governance ── */
+.pathway {
+  padding: clamp(8px, 2vw, 16px) 0 clamp(20px, 3vw, 36px);
+  position: relative;
+}
+
+.pathwaySvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Auto height from viewBox 1000×90 */
+  aspect-ratio: 1000 / 90;
 }
 
 /* ── Narrative inscription ── */
 .inscription {
   text-align: center;
   font-family: var(--font-display);
-  font-size: clamp(13px, 1.4vw, 17px);
+  font-size: clamp(13px, 1.35vw, 17px);
   font-weight: 400;
   font-style: italic;
   color: var(--c-text-muted);
-  letter-spacing: 0.18em;
-  padding-top: clamp(28px, 4vw, 44px);
-  opacity: 0.7;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  padding-top: clamp(16px, 3vw, 28px);
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.72;
 }
 
 /* ── Responsive ── */
 @media (max-width: 860px) {
   .degreePair {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 0 36px;
+    gap: 0 28px;
   }
 
-  /* On tablet, Philosophy order resets to natural 2-col layout */
-  .degreeFoundation {
+  /* On tablet, restore natural DOM order */
+  .pillarFoundation {
     order: 0;
   }
 
-  /* Hide vertical separator on tablet — use beam lines instead */
   .centralSep {
     display: none;
-  }
-
-  /* Reset Philosophy right-align on tablet → left-align */
-  .degreeFoundation {
-    text-align: left;
-  }
-
-  .degreeFoundation .degreeDivider {
-    margin-left: 0;
   }
 }
 
 @media (max-width: 600px) {
   .degreePair {
     grid-template-columns: 1fr;
-    gap: 44px 0;
+    gap: 24px 0;
+    padding: clamp(36px, 8vw, 60px) 0;
   }
 
-  .degreeFoundation {
+  .pillarFoundation {
     order: 0;
-    text-align: left;
-  }
-
-  .degreeFoundation .degreeDivider {
-    margin-left: 0;
   }
 
   .centralSep {
     display: none;
   }
 
-  /* Reduce inscription tracking on mobile */
+  .pillar {
+    padding: 32px 28px;
+  }
+
   .inscription {
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
   }
 }

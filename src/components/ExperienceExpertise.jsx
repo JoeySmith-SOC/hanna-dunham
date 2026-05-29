@@ -34,12 +34,13 @@ const CAP_LABELS = [
 ];
 
 // SVG y-baseline positions for labels (above top nodes, below bottom nodes)
+// Hub orbit r=48, hub r=28; sat halo r=25, sat r=16
 const CAP_LABEL_Y = [
-  { y1: 190, y2: 204 }, // Hub: above
-  { y1: 52,  y2: 66  }, // top-right: above
-  { y1: 52,  y2: 66  }, // top-left: above
-  { y1: 433, y2: 447 }, // bottom-right: below
-  { y1: 433, y2: 447 }, // bottom-left: below
+  { y1: 184, y2: 200 }, // Hub: above (250 - 48 - 10 - 8 = 184)
+  { y1: 44,  y2: 60  }, // top-right: above  (95 - 25 - 10 - 16 = 44)
+  { y1: 44,  y2: 60  }, // top-left: above
+  { y1: 440, y2: 456 }, // bottom-right: below (405 + 25 + 10 = 440)
+  { y1: 440, y2: 456 }, // bottom-left: below
 ];
 
 const CAP_HUB  = CAP_NODES[0];
@@ -167,7 +168,7 @@ export default function ExperienceExpertise() {
                 </defs>
 
                 {/* Hub ambient haze */}
-                <circle cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={88} fill="url(#eeHubAura)" />
+                <circle cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={110} fill="url(#eeHubAura)" />
 
                 {/* Outer frame — architectural skeleton (very faint) */}
                 {[
@@ -179,8 +180,8 @@ export default function ExperienceExpertise() {
                   <motion.path
                     key={`frame-${i}`}
                     d={d}
-                    stroke={i < 2 ? 'rgba(212,168,67,0.055)' : 'rgba(212,168,67,0.038)'}
-                    strokeWidth={0.55}
+                    stroke={i < 2 ? 'rgba(212,168,67,0.14)' : 'rgba(212,168,67,0.09)'}
+                    strokeWidth={0.75}
                     fill="none"
                     initial={rm ? { opacity: 1 } : { opacity: 0 }}
                     animate={networkInView ? { opacity: 1 } : { opacity: 0 }}
@@ -195,8 +196,8 @@ export default function ExperienceExpertise() {
                     <motion.path
                       key={`conn-${idx}`}
                       d={`M ${CAP_HUB.cx} ${CAP_HUB.cy} L ${cx} ${cy}`}
-                      stroke={isActive ? 'rgba(212,168,67,0.44)' : 'rgba(212,168,67,0.1)'}
-                      strokeWidth={isActive ? 1.2 : 0.7}
+                      stroke={isActive ? 'rgba(212,168,67,0.65)' : 'rgba(212,168,67,0.2)'}
+                      strokeWidth={isActive ? 1.8 : 1.1}
                       fill="none"
                       initial={connInit}
                       animate={connAnim}
@@ -225,10 +226,10 @@ export default function ExperienceExpertise() {
                 >
                   {/* Rotating orbit ring */}
                   <motion.circle
-                    cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={36}
+                    cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={48}
                     fill="none"
-                    stroke={activeCapability === 0 ? 'rgba(212,168,67,0.28)' : 'rgba(212,168,67,0.09)'}
-                    strokeWidth={0.75}
+                    stroke={activeCapability === 0 ? 'rgba(212,168,67,0.35)' : 'rgba(212,168,67,0.13)'}
+                    strokeWidth={1}
                     strokeDasharray="3 7"
                     initial={rm ? { opacity: 1 } : { opacity: 0 }}
                     animate={networkInView
@@ -246,10 +247,10 @@ export default function ExperienceExpertise() {
                   />
                   {/* Main circle */}
                   <motion.circle
-                    cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={21}
-                    fill={activeCapability === 0 ? 'rgba(212,168,67,0.14)' : 'rgba(212,168,67,0.05)'}
-                    stroke={activeCapability === 0 ? 'rgba(212,168,67,0.65)' : 'rgba(212,168,67,0.26)'}
-                    strokeWidth={1.5}
+                    cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={28}
+                    fill={activeCapability === 0 ? 'rgba(212,168,67,0.18)' : 'rgba(212,168,67,0.07)'}
+                    stroke={activeCapability === 0 ? 'rgba(212,168,67,0.75)' : 'rgba(212,168,67,0.32)'}
+                    strokeWidth={2}
                     filter={activeCapability === 0 ? 'url(#eeHubGlow)' : undefined}
                     initial={rm ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                     animate={networkInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
@@ -259,7 +260,7 @@ export default function ExperienceExpertise() {
                       transition: 'fill 340ms ease, stroke 340ms ease',
                     }}
                   />
-                  <circle cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={4} fill="rgba(212,168,67,0.82)" />
+                  <circle cx={CAP_HUB.cx} cy={CAP_HUB.cy} r={5.5} fill="rgba(212,168,67,0.9)" />
                 </g>
 
                 {/* Satellite nodes */}
@@ -278,10 +279,10 @@ export default function ExperienceExpertise() {
                     >
                       {/* Halo */}
                       <motion.circle
-                        cx={cx} cy={cy} r={19}
+                        cx={cx} cy={cy} r={25}
                         fill="none"
-                        stroke={isActive ? 'rgba(212,168,67,0.2)' : 'rgba(212,168,67,0.055)'}
-                        strokeWidth={0.7}
+                        stroke={isActive ? 'rgba(212,168,67,0.3)' : 'rgba(212,168,67,0.09)'}
+                        strokeWidth={0.9}
                         initial={rm ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                         animate={networkInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                         transition={{ duration: rm ? 0 : 0.48, delay: rm ? 0 : 0.5 + i * 0.1, ease: EASE_C }}
@@ -292,10 +293,10 @@ export default function ExperienceExpertise() {
                       />
                       {/* Main circle */}
                       <motion.circle
-                        cx={cx} cy={cy} r={12}
-                        fill={isActive ? 'rgba(212,168,67,0.15)' : 'rgba(212,168,67,0.04)'}
-                        stroke={isActive ? 'rgba(212,168,67,0.58)' : 'rgba(212,168,67,0.18)'}
-                        strokeWidth={0.9}
+                        cx={cx} cy={cy} r={16}
+                        fill={isActive ? 'rgba(212,168,67,0.18)' : 'rgba(212,168,67,0.055)'}
+                        stroke={isActive ? 'rgba(212,168,67,0.7)' : 'rgba(212,168,67,0.26)'}
+                        strokeWidth={1.4}
                         filter={isActive ? 'url(#eeSatGlow)' : undefined}
                         initial={rm ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                         animate={networkInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
@@ -306,8 +307,8 @@ export default function ExperienceExpertise() {
                         }}
                       />
                       <circle
-                        cx={cx} cy={cy} r={2.5}
-                        fill={isActive ? 'rgba(212,168,67,0.95)' : 'rgba(212,168,67,0.4)'}
+                        cx={cx} cy={cy} r={4}
+                        fill={isActive ? 'rgba(212,168,67,0.95)' : 'rgba(212,168,67,0.45)'}
                         style={{ transition: 'fill 340ms ease' }}
                       />
                     </g>
@@ -324,9 +325,9 @@ export default function ExperienceExpertise() {
                     : 'rgba(255,255,255,0.34)';
                   const labelStyle = {
                     fontFamily: 'Inter,-apple-system,BlinkMacSystemFont,sans-serif',
-                    fontSize: '8px',
+                    fontSize: '10px',
                     fontWeight: '500',
-                    letterSpacing: '0.15em',
+                    letterSpacing: '0.14em',
                     textTransform: 'uppercase',
                     fill: labelFill,
                     transition: 'fill 340ms ease',

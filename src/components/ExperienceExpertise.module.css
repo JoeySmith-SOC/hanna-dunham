@@ -1,43 +1,44 @@
 .section {
-  padding-top: var(--sp-section);
-  padding-bottom: var(--sp-section);
+  padding-top: clamp(110px, 15vw, 200px);
+  padding-bottom: clamp(110px, 15vw, 200px);
   border-top: 1px solid var(--c-border-subtle);
 }
 
+/* Wider than the global container — this section dominates the viewport */
 .container {
-  max-width: var(--container-max);
+  max-width: 1360px;
   margin: 0 auto;
   padding: 0 var(--container-padding);
 }
 
 /* ── Section header ── */
 .sectionHeader {
-  margin-bottom: clamp(36px, 5vw, 56px);
+  margin-bottom: clamp(48px, 6vw, 80px);
 }
 
 .sectionLabel {
   display: block;
-  font-size: var(--fs-label);
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--c-accent);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .sectionHeading {
   font-family: var(--font-display);
-  font-size: var(--fs-h2);
+  font-size: clamp(32px, 5vw, 56px);
   font-weight: 400;
-  line-height: 1.12;
+  line-height: 1.1;
   color: var(--c-text);
 }
 
-/* ── Desktop split: 57 / 43 ── */
+/* ── Desktop split: 52 / 48 ── */
 .split {
   display: grid;
-  grid-template-columns: 57fr 43fr;
-  gap: 0 60px;
+  grid-template-columns: 52fr 48fr;
+  gap: 0 72px;
   align-items: start;
 }
 
@@ -45,32 +46,32 @@
    LEFT COLUMN — Career Timeline
 ───────────────────────────────────────────────── */
 .leftColumn {
-  min-width: 0; /* prevent grid blowout */
+  min-width: 0;
 }
 
 .columnLabel {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--c-text-muted);
-  margin-bottom: 28px;
+  margin-bottom: 32px;
   opacity: 0.7;
 }
 
-/* Timeline grid: 1px line | 44px gap | entries */
+/* Timeline grid: 1px line | 52px gap | entries */
 .timeline {
   display: grid;
   grid-template-columns: 1px 1fr;
-  gap: 0 44px;
+  gap: 0 52px;
 }
 
 .lineTrack {
   position: relative;
   grid-column: 1;
   grid-row: 1;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   align-self: stretch;
 }
 
@@ -80,7 +81,7 @@
   background: linear-gradient(
     to bottom,
     var(--c-accent),
-    rgba(212, 168, 67, 0.08)
+    rgba(212, 168, 67, 0.1)
   );
 }
 
@@ -91,24 +92,24 @@
 /* ── Single timeline entry ── */
 .entry {
   position: relative;
-  padding-bottom: 36px;
+  padding-bottom: 52px;
 }
 
 .entry:last-child {
   padding-bottom: 0;
 }
 
-/* Dot: sits on the vertical line */
-/* entries start at 1px + 44px = 45px from container;
-   left: -50px → dot center ≈ 1px (aligned to 1px line track) */
+/* Dot: centered on the 1px line track
+   entries start at 1px + 52px = 53px from left;
+   left: -61px → dot center at 53 - 61 + 9 = 1px (on track) */
 .dot {
   position: absolute;
-  left: -50px;
-  top: 4px;
-  width: 12px;
-  height: 12px;
+  left: -61px;
+  top: 5px;
+  width: 18px;
+  height: 18px;
   background: var(--c-bg);
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -121,7 +122,7 @@
 
 .dotCurrent {
   border-color: var(--c-accent);
-  box-shadow: 0 0 10px rgba(212, 168, 67, 0.28);
+  box-shadow: 0 0 16px rgba(212, 168, 67, 0.35);
 }
 
 .entry:hover .dot {
@@ -129,11 +130,11 @@
 }
 
 .dotCore {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   background: var(--c-accent);
   border-radius: 50%;
-  opacity: 0.55;
+  opacity: 0.6;
   transition:
     opacity var(--dur-slow) var(--ease-out),
     transform var(--dur-slow) var(--ease-out);
@@ -155,19 +156,19 @@
 }
 
 .entry:hover .entryBody {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 /* Period + badge */
 .entryMeta {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 3px;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .period {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.13em;
   color: var(--c-accent);
@@ -175,31 +176,31 @@
 }
 
 .currentBadge {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--c-bg);
   background: var(--c-accent);
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 2px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-/* Company name */
+/* Company */
 .companyLine {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .company {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--c-text-muted);
   letter-spacing: 0.01em;
 }
 
 .subcompany {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--c-text-muted);
   opacity: 0.65;
@@ -208,16 +209,16 @@
 /* Role title */
 .role {
   font-family: var(--font-display);
-  font-size: clamp(14px, 1.5vw, 17px);
+  font-size: clamp(17px, 1.8vw, 22px);
   font-weight: 400;
   color: var(--c-text);
   line-height: 1.22;
-  margin: 0 0 10px 0;
+  margin: 0 0 12px 0;
   transition: color var(--dur-base) var(--ease-out);
 }
 
 .roleCurrent {
-  font-size: clamp(17px, 2vw, 21px);
+  font-size: clamp(21px, 2.5vw, 28px);
   color: #fff;
 }
 
@@ -225,26 +226,26 @@
   color: #fff;
 }
 
-/* Description (detail entries only) */
+/* Description (current role only) */
 .description {
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 300;
-  line-height: 1.8;
+  line-height: 1.82;
   color: var(--c-text-secondary);
-  max-width: 500px;
-  margin-bottom: 12px;
+  max-width: 560px;
+  margin-bottom: 14px;
 }
 
 /* Tags */
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 5px;
 }
 
 .tag {
-  padding: 3px 8px;
-  font-size: 9.5px;
+  padding: 4px 11px;
+  font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--c-text-muted);
@@ -257,13 +258,13 @@
 }
 
 .tag:hover {
-  border-color: rgba(212, 168, 67, 0.28);
+  border-color: rgba(212, 168, 67, 0.3);
   color: var(--c-accent);
 }
 
 .tagMore {
-  padding: 3px 7px;
-  font-size: 9.5px;
+  padding: 4px 9px;
+  font-size: 11px;
   color: var(--c-text-muted);
   opacity: 0.5;
 }
@@ -273,13 +274,12 @@
 ───────────────────────────────────────────────── */
 .rightColumn {
   min-width: 0;
-  /* Sticky: stays in viewport while timeline scrolls */
   position: sticky;
-  top: 80px; /* 64px nav + 16px breathing room */
+  top: 80px;
   align-self: start;
 }
 
-/* Aspect-ratio container: 500×500 = 100% */
+/* Aspect-ratio 500×500 = 100% */
 .networkWrap {
   position: relative;
   width: 100%;
@@ -295,11 +295,11 @@
   display: block;
 }
 
-/* Skills panel — below SVG */
+/* Skills panel */
 .skillsPanel {
   border-top: 1px solid var(--c-border-subtle);
-  padding-top: 22px;
-  min-height: 128px;
+  padding-top: 28px;
+  min-height: 148px;
 }
 
 .skillsPanelInner {
@@ -309,22 +309,22 @@
 .skillsRow {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .skillsIndex {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.1em;
   color: var(--c-accent);
-  opacity: 0.5;
+  opacity: 0.55;
   flex-shrink: 0;
 }
 
 .skillsCategory {
   font-family: var(--font-display);
-  font-size: clamp(16px, 2vw, 21px);
+  font-size: clamp(20px, 2.4vw, 28px);
   font-weight: 400;
   color: var(--c-text);
   line-height: 1.15;
@@ -333,23 +333,23 @@
 .skillsList {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 9px;
 }
 
 .skillItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  gap: 11px;
+  font-size: 14px;
   font-weight: 300;
   color: var(--c-text-secondary);
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .skillDash {
   color: var(--c-accent);
-  opacity: 0.4;
-  font-size: 10px;
+  opacity: 0.45;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
@@ -357,92 +357,60 @@
    RESPONSIVE
 ───────────────────────────────────────────────── */
 
-/* Large desktop: tighten column label gap */
-@media (min-width: 1280px) {
+@media (min-width: 1440px) {
   .split {
-    gap: 0 72px;
+    gap: 0 88px;
   }
 }
 
-/* Tablet landscape: keep side-by-side but narrow gap */
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .split {
-    gap: 0 44px;
+    gap: 0 52px;
   }
-
   .rightColumn {
     top: 72px;
   }
 }
 
-/* Tablet portrait: switch to 50/50 */
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .split {
     grid-template-columns: 1fr 1fr;
-    gap: 0 36px;
-  }
-
-  .role {
-    font-size: clamp(13px, 1.8vw, 16px);
+    gap: 0 40px;
   }
 }
 
-/* Mobile: single column, disable sticky */
 @media (max-width: 768px) {
   .split {
     grid-template-columns: 1fr;
-    gap: 56px 0;
+    gap: 64px 0;
   }
-
   .rightColumn {
     position: static;
   }
-
   .networkWrap {
-    /* Cap SVG size so it doesn't overwhelm on mobile */
-    max-width: 440px;
+    max-width: 480px;
   }
-
   .skillsPanel {
-    max-width: 440px;
+    max-width: 480px;
   }
 }
 
-/* Small mobile: hide timeline line/dots */
 @media (max-width: 580px) {
   .timeline {
     grid-template-columns: 1fr;
     gap: 0;
   }
-
-  .lineTrack {
-    display: none;
-  }
-
-  .dot {
-    display: none;
-  }
-
-  .entries {
-    grid-column: 1;
-  }
-
+  .lineTrack { display: none; }
+  .dot { display: none; }
+  .entries { grid-column: 1; }
   .entry {
-    padding-bottom: 32px;
+    padding-bottom: 36px;
     border-bottom: 1px solid var(--c-border-subtle);
   }
-
   .entry:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
-
-  .entry:hover .entryBody {
-    transform: none;
-  }
-
-  .networkWrap {
-    max-width: 100%;
-    padding-bottom: 90%; /* slightly shorter on small phones */
-  }
+  .entry:hover .entryBody { transform: none; }
+  .networkWrap { max-width: 100%; padding-bottom: 90%; }
 }

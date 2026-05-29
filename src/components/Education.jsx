@@ -1,57 +1,108 @@
-import { useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useInView, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { education } from '../data/content';
 import ScrollReveal from './ScrollReveal';
 import styles from './Education.module.css';
 
-const EASE    = [0.25, 0.46, 0.45, 0.94];
-const EASE_C  = [0.16, 1, 0.3, 1];
+// ═══════════════════════════════════════════════════════
+//  ANIMATION TIMING — tune these constants to adjust
+//  the entire entrance sequence
+// ═══════════════════════════════════════════════════════
+const ANIM = {
+  // Atmospheric glow blooms first, before anything else
+  GLOW_DELAY:      0.0,
+  GLOW_DURATION:   1.0,
 
-// ─── Perspective grid geometry ────────────────────────────────────────────────
-// SVG viewBox: 1200 × 600
-// Vanishing point: (600, 180)
-// Outer diagonals: (0,600)→VP and (1200,600)→VP
+  // Architectural column lines rise from top
+  COLUMN_DELAY:    0.28,
+  COLUMN_DURATION: 1.3,
 
-const VP   = { x: 600, y: 180 };
-const SW   = 1200;
-const SH   = 600;
+  // Perspective floor grid draws outward
+  GRID_DELAY:      0.12,
+  GRID_STAGGER:    0.055,
+  GRID_DURATION:   1.5,
+  CROSS_DELAY:     0.6,
+  CROSS_STAGGER:   0.09,
+  CROSS_DURATION:  0.9,
 
-// Radiating lines: VP → bottom edge (9 lines, spread evenly)
-const RAD_LINES = [0, 150, 300, 450, 600, 750, 900, 1050, 1200].map(x => ({
-  d: `M ${VP.x} ${VP.y} L ${x} ${SH}`,
+  // Horizontal architectural beams
+  UPPER_BEAM_DELAY:   0.42,
+  BEAM_DURATION:      1.6,
+  LOWER_BEAM_DELAY:   1.1,
+
+  // Degree pillars rise (Philosophy is left, appears first)
+  PILLAR_PHIL_DELAY:  0.65,
+  PILLAR_JD_DELAY:    0.82,
+  PILLAR_DURATION:    1.1,
+
+  // Staggered reveals INSIDE each pillar (offset from pillar delay)
+  ABBREV_OFFSET:       0.0,
+  TITLE_OFFSET:        0.14,
+  TOP_LINE_OFFSET:     0.28,
+  INSTITUTION_OFFSET:  0.38,
+  HONOR_PRIMARY_OFFSET: 0.44,
+  HONOR_SECONDARY_OFFSET: 0.54,
+  NOTE_OFFSET:         0.48,
+
+  // Philosophy → Law → Governance pathway
+  // Line draws left-to-right over PATHWAY_DURATION seconds
+  PATHWAY_DELAY:       1.25,
+  PATHWAY_DURATION:    1.4,
+  // Node delays aligned to when the line reaches each x position (8%, 50%, 92%)
+  PATHWAY_NODE_DELAYS: [1.25, 1.95, 2.65],
+  PATHWAY_LABEL_OFFSET: 0.22,
+
+  // Final inscription
+  INSCRIPTION_DELAY:   2.9,
+};
+
+// ═══════════════════════════════════════════════════════
+//  PERSPECTIVE GRID GEOMETRY
+//  SVG viewBox: 0 0 1200 600
+//  Vanishing point VP = (600, 180)
+//  Outer diagonals: (0, 600)→VP and (1200, 600)→VP
+// ═══════════════════════════════════════════════════════
+const VP  = { x: 600, y: 180 };
+const GSW = 1200;
+const GSH = 600;
+
+// 9 lines radiating from VP to bottom edge
+const GRID_RAD = [0, 133, 266, 400, 600, 800, 933, 1066, 1200].map(x => ({
+  d: `M ${VP.x} ${VP.y} L ${x} ${GSH}`,
 }));
 
-// Horizontal cross-lines at y = 300 … 500 plus bottom edge
-const CROSS_LINES = [300, 360, 420, 480, 540].map(y => {
-  const t  = (SH - y) / (SH - VP.y);
+// Cross-lines at increasing depth (y = 280…550)
+const GRID_CROSS = [280, 340, 400, 460, 520].map(y => {
+  const t  = (GSH - y) / (GSH - VP.y);      // parametric t along outer diagonals
   const xl = parseFloat((t * VP.x).toFixed(1));
-  const xr = parseFloat((SW - xl).toFixed(1));
-  // Opacity increases as line approaches viewer (lower y = closer to VP = fainter)
-  const opacity = parseFloat((0.018 + ((y - 300) / 240) * 0.055).toFixed(4));
+  const xr = parseFloat((GSW - xl).toFixed(1));
+  // Opacity ramps from faint (near VP) to more visible (near viewer)
+  const opacity = parseFloat((0.04 + ((y - 280) / 270) * 0.11).toFixed(4));
   return { d: `M ${xl} ${y} L ${xr} ${y}`, opacity };
 });
-CROSS_LINES.push({ d: `M 0 ${SH} L ${SW} ${SH}`, opacity: 0.09 });
+// Bottom full-width base line
+GRID_CROSS.push({ d: `M 0 ${GSH} L ${GSW} ${GSH}`, opacity: 0.18 });
 
+const EASE   = [0.25, 0.46, 0.45, 0.94];
+const EASE_C = [0.16, 1, 0.3, 1];
+
+// ═══════════════════════════════════════════════════════
+//  MAIN COMPONENT
+// ═══════════════════════════════════════════════════════
 export default function Education() {
-  const ref       = useRef(null);
-  const isInView  = useInView(ref, { once: true, margin: '-80px' });
-  const rm        = useReducedMotion();
+  const ref      = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const rm       = useReducedMotion();
 
-  const lawDegree  = education[0]; // J.D. — primary credential
-  const philDegree = education[1]; // B.A. Philosophy — analytical foundation
+  const lawDegree  = education[0]; // J.D.  — primary credential
+  const philDegree = education[1]; // B.A. Philosophy — foundation
 
-  // Split J.D. honors string into primary + secondary
-  const honorsParts    = lawDegree.honors?.split(' · ') ?? [];
-  const primaryHonor   = honorsParts[0] ?? '';                   // Cum Laude
-  const secondaryHonors = honorsParts.slice(1).join(' · ');      // Litigation Concentration · ...
+  const pathInit   = rm ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 };
+  const pathTarget = isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 };
 
-  const pathInit = rm
-    ? { pathLength: 1, opacity: 1 }
-    : { pathLength: 0, opacity: 0 };
-
-  const pathTarget = isInView
-    ? { pathLength: 1, opacity: 1 }
-    : { pathLength: 0, opacity: 0 };
+  // Convert ANIM delays to 0 for reduced-motion
+  const d = (val) => rm ? 0 : val;
+  const dur = (val) => rm ? 0 : val;
 
   return (
     <section
@@ -60,56 +111,91 @@ export default function Education() {
       aria-label="Education"
       ref={ref}
     >
-      {/* ── Atmospheric backdrop ── */}
+      {/* ═══════════════════════════════════════════════
+           LAYER 1 — Atmospheric backdrop
+          Perspective grid + architectural columns + glow
+          ═══════════════════════════════════════════════ */}
       <div className={styles.atmosphere} aria-hidden="true">
-        {/* Diffuse gold light from above — the "window" */}
-        <div className={styles.atmosphereOuter} />
-        <div className={styles.atmosphereCore} />
+
+        {/* Diffuse gold bloom — wide ambient light */}
+        <motion.div
+          className={styles.glowOuter}
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0 }}
+          transition={{ duration: dur(ANIM.GLOW_DURATION), delay: d(ANIM.GLOW_DELAY), ease: EASE }}
+        />
+
+        {/* Concentrated light source — the "high window" */}
+        <motion.div
+          className={styles.glowCore}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: dur(ANIM.GLOW_DURATION + 0.4), delay: d(ANIM.GLOW_DELAY + 0.2) }}
+        />
 
         {/* Perspective floor grid */}
         <svg
-          viewBox={`0 0 ${SW} ${SH}`}
+          viewBox={`0 0 ${GSW} ${GSH}`}
           className={styles.perspectiveSvg}
           preserveAspectRatio="xMidYMax slice"
-          aria-hidden="true"
           focusable="false"
         >
-          {/* Radiating lines from vanishing point */}
-          {RAD_LINES.map(({ d }, i) => (
+          {/* Radiating lines — draw outward from vanishing point */}
+          {GRID_RAD.map(({ d: path }, i) => (
             <motion.path
               key={`r${i}`}
-              d={d}
-              stroke="rgba(212,168,67,0.042)"
-              strokeWidth={0.5}
+              d={path}
+              stroke="rgba(212,168,67,0.09)"
+              strokeWidth={0.7}
               fill="none"
               initial={pathInit}
               animate={pathTarget}
               transition={{
-                pathLength: { duration: rm ? 0 : 1.6, delay: rm ? 0 : 0.05 + i * 0.06, ease: EASE },
-                opacity:    { duration: 0.25, delay: rm ? 0 : 0.05 + i * 0.06 },
+                pathLength: { duration: dur(ANIM.GRID_DURATION), delay: d(ANIM.GRID_DELAY + i * ANIM.GRID_STAGGER), ease: EASE },
+                opacity:    { duration: 0.3, delay: d(ANIM.GRID_DELAY + i * ANIM.GRID_STAGGER) },
               }}
             />
           ))}
-          {/* Depth cross-lines */}
-          {CROSS_LINES.map(({ d, opacity }, i) => (
+          {/* Cross-depth lines — appear as lines approach viewer */}
+          {GRID_CROSS.map(({ d: path, opacity: op }, i) => (
             <motion.path
               key={`c${i}`}
-              d={d}
-              stroke={`rgba(212,168,67,${opacity})`}
-              strokeWidth={0.55}
+              d={path}
+              stroke={`rgba(212,168,67,${op})`}
+              strokeWidth={0.7}
               fill="none"
               initial={rm ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
               animate={isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
               transition={{
-                pathLength: { duration: rm ? 0 : 0.85, delay: rm ? 0 : 0.65 + i * 0.1, ease: EASE },
-                opacity:    { duration: 0.3,  delay: rm ? 0 : 0.65 + i * 0.1 },
+                pathLength: { duration: dur(ANIM.CROSS_DURATION), delay: d(ANIM.CROSS_DELAY + i * ANIM.CROSS_STAGGER), ease: EASE },
+                opacity:    { duration: 0.3, delay: d(ANIM.CROSS_DELAY + i * ANIM.CROSS_STAGGER) },
               }}
             />
           ))}
         </svg>
+
+        {/* Left architectural column line — rises from top */}
+        <motion.div
+          className={styles.archColumn}
+          style={{ left: 'clamp(20px, 4vw, 56px)', transformOrigin: 'top' }}
+          initial={{ scaleY: rm ? 1 : 0, opacity: 0 }}
+          animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
+          transition={{ duration: dur(ANIM.COLUMN_DURATION), delay: d(ANIM.COLUMN_DELAY), ease: EASE_C }}
+        />
+
+        {/* Right architectural column line */}
+        <motion.div
+          className={styles.archColumn}
+          style={{ right: 'clamp(20px, 4vw, 56px)', transformOrigin: 'top' }}
+          initial={{ scaleY: rm ? 1 : 0, opacity: 0 }}
+          animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
+          transition={{ duration: dur(ANIM.COLUMN_DURATION), delay: d(ANIM.COLUMN_DELAY + 0.06), ease: EASE_C }}
+        />
       </div>
 
-      {/* ── Content ── */}
+      {/* ═══════════════════════════════════════════════
+           LAYER 2 — Content
+          ═══════════════════════════════════════════════ */}
       <div className={styles.container}>
 
         {/* Section header */}
@@ -127,57 +213,42 @@ export default function Education() {
           className={styles.beam}
           initial={{ scaleX: rm ? 1 : 0 }}
           animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: rm ? 0 : 1.6, delay: rm ? 0 : 0.38, ease: EASE_C }}
+          transition={{ duration: dur(ANIM.BEAM_DURATION), delay: d(ANIM.UPPER_BEAM_DELAY), ease: EASE_C }}
           style={{ transformOrigin: 'center' }}
           aria-hidden="true"
         />
 
-        {/* Degree pair — J.D. is DOM-first (mobile priority); CSS order puts Philosophy left */}
+        {/* ── Degree Pillars ── */}
+        {/* J.D. is DOM-first (mobile priority). CSS order: -1 puts Philosophy left on desktop */}
         <div className={styles.degreePair}>
 
-          {/* J.D. — primary credential, displayed RIGHT on desktop */}
-          <motion.div
-            className={`${styles.degree} ${styles.degreePrimary}`}
-            initial={{ opacity: 0, y: rm ? 0 : 22 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-            transition={{ duration: 0.95, delay: rm ? 0 : 0.82, ease: EASE }}
-          >
-            <span className={styles.degreeAbbrev}>{lawDegree.abbreviation}</span>
-            <h3 className={styles.degreeTitle}>{lawDegree.degree}</h3>
-            <div className={styles.degreeDivider} aria-hidden="true" />
-            {primaryHonor && (
-              <p className={styles.honorPrimary}>{primaryHonor}</p>
-            )}
-            {secondaryHonors && (
-              <p className={styles.honorSecondary}>{secondaryHonors}</p>
-            )}
-            <p className={styles.degreeInstitution}>{lawDegree.institution}</p>
-          </motion.div>
+          {/* J.D. Pillar — right on desktop, top on mobile */}
+          <EducationPillar
+            entry={lawDegree}
+            isPrimary
+            isInView={isInView}
+            baseDelay={ANIM.PILLAR_JD_DELAY}
+            rm={rm}
+          />
 
           {/* Central architectural separator */}
           <motion.div
             className={styles.centralSep}
             initial={{ scaleY: rm ? 1 : 0, opacity: 0 }}
             animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
-            transition={{ duration: rm ? 0 : 1.1, delay: rm ? 0 : 0.62, ease: EASE_C }}
-            style={{ transformOrigin: 'center' }}
+            transition={{ duration: dur(1.2), delay: d(0.72), ease: EASE_C }}
+            style={{ transformOrigin: 'top' }}
             aria-hidden="true"
           />
 
-          {/* B.A. Philosophy — analytical foundation, displayed LEFT on desktop */}
-          <motion.div
-            className={`${styles.degree} ${styles.degreeFoundation}`}
-            initial={{ opacity: 0, y: rm ? 0 : 22 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-            transition={{ duration: 0.95, delay: rm ? 0 : 0.68, ease: EASE }}
-          >
-            <span className={styles.degreeAbbrev}>{philDegree.abbreviation}</span>
-            <h3 className={styles.degreeTitle}>{philDegree.degree}</h3>
-            <div className={styles.degreeDivider} aria-hidden="true" />
-            <p className={styles.degreeInstitution}>{philDegree.institution}</p>
-            <p className={styles.foundationNote}>The analytical foundation</p>
-          </motion.div>
-
+          {/* Philosophy Pillar — left on desktop via CSS order: -1 */}
+          <EducationPillar
+            entry={philDegree}
+            isPrimary={false}
+            isInView={isInView}
+            baseDelay={ANIM.PILLAR_PHIL_DELAY}
+            rm={rm}
+          />
         </div>
 
         {/* Lower architectural beam */}
@@ -185,22 +256,232 @@ export default function Education() {
           className={styles.beam}
           initial={{ scaleX: rm ? 1 : 0 }}
           animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ duration: rm ? 0 : 1.6, delay: rm ? 0 : 0.98, ease: EASE_C }}
+          transition={{ duration: dur(ANIM.BEAM_DURATION), delay: d(ANIM.LOWER_BEAM_DELAY), ease: EASE_C }}
           style={{ transformOrigin: 'center' }}
           aria-hidden="true"
         />
+
+        {/* ── Pathway: Philosophy → Law → Governance ── */}
+        <IntellectualPathway isInView={isInView} rm={rm} />
 
         {/* Narrative inscription */}
         <motion.p
           className={styles.inscription}
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: rm ? 0 : 1.2, delay: rm ? 0 : 1.2 }}
+          transition={{ duration: dur(1.2), delay: d(ANIM.INSCRIPTION_DELAY) }}
         >
-          Philosophy · Law · Governance
+          Where philosophical inquiry became legal precision,
+          and legal precision became enterprise governance.
         </motion.p>
-
       </div>
     </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  EDUCATION PILLAR — individual degree card
+//  Handles its own staggered internal reveal + hover sweep
+// ═══════════════════════════════════════════════════════
+function EducationPillar({ entry, isPrimary, isInView, baseDelay, rm }) {
+  const [hovered, setHovered] = useState(false);
+
+  // Parse honors into primary (Cum Laude) and secondary (rest)
+  const honorsParts   = entry.honors?.split(' · ') ?? [];
+  const honorPrimary  = honorsParts[0] ?? '';
+  const honorSecondary = honorsParts.slice(1).join(' · ');
+
+  const d   = (offset) => rm ? 0 : baseDelay + offset;
+  const dur = (val)    => rm ? 0 : val;
+
+  return (
+    <motion.article
+      className={`${styles.pillar} ${isPrimary ? styles.pillarPrimary : styles.pillarFoundation}`}
+      initial={{ opacity: 0, y: rm ? 0 : 56 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 56 }}
+      transition={{ duration: dur(ANIM.PILLAR_DURATION), delay: d(0), ease: EASE_C }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={rm ? {} : { y: -7, transition: { duration: 0.38, ease: EASE } }}
+    >
+      {/* Light sweep across card on hover */}
+      <AnimatePresence>
+        {hovered && !rm && (
+          <motion.div
+            key="sweep"
+            className={styles.lightSweep}
+            initial={{ x: '-110%', opacity: 1 }}
+            animate={{ x: '220%', opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            transition={{ duration: 0.55, ease: 'easeOut' }}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Abbreviated credential label */}
+      <motion.span
+        className={styles.pillarAbbrev}
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: dur(0.6), delay: d(ANIM.ABBREV_OFFSET) }}
+      >
+        {entry.abbreviation}
+      </motion.span>
+
+      {/* Degree title — rises upward */}
+      <motion.h3
+        className={styles.pillarTitle}
+        initial={{ opacity: 0, y: rm ? 0 : 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: dur(0.85), delay: d(ANIM.TITLE_OFFSET), ease: EASE }}
+      >
+        {entry.degree}
+      </motion.h3>
+
+      {/* Gold rule — draws from left */}
+      <motion.div
+        className={styles.pillarRule}
+        initial={{ scaleX: rm ? 1 : 0 }}
+        animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={{ duration: dur(0.8), delay: d(ANIM.TOP_LINE_OFFSET), ease: EASE_C }}
+        style={{ transformOrigin: 'left' }}
+        aria-hidden="true"
+      />
+
+      {/* Primary honor (e.g. Cum Laude) */}
+      {honorPrimary && (
+        <motion.p
+          className={styles.pillarHonorPrimary}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: dur(0.7), delay: d(ANIM.HONOR_PRIMARY_OFFSET) }}
+        >
+          {honorPrimary}
+        </motion.p>
+      )}
+
+      {/* Secondary honors */}
+      {honorSecondary && (
+        <motion.p
+          className={styles.pillarHonorSecondary}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: dur(0.7), delay: d(ANIM.HONOR_SECONDARY_OFFSET) }}
+        >
+          {honorSecondary}
+        </motion.p>
+      )}
+
+      {/* Institution name */}
+      <motion.p
+        className={styles.pillarInstitution}
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: dur(0.7), delay: d(ANIM.INSTITUTION_OFFSET) }}
+      >
+        {entry.institution}
+      </motion.p>
+
+      {/* Foundation note (B.A. only — no honors to show) */}
+      {!isPrimary && (
+        <motion.p
+          className={styles.pillarNote}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: dur(0.6), delay: d(ANIM.NOTE_OFFSET) }}
+        >
+          The analytical foundation
+        </motion.p>
+      )}
+    </motion.article>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  INTELLECTUAL PATHWAY
+//  Animated line drawing: Philosophy → Law → Governance
+//  SVG viewBox: 0 0 1000 90
+// ═══════════════════════════════════════════════════════
+const PATHWAY_NODES = [
+  { cx: 80,  label: 'Philosophy' },
+  { cx: 500, label: 'Law'        },
+  { cx: 920, label: 'Governance' },
+];
+
+function IntellectualPathway({ isInView, rm }) {
+  const d   = (val) => rm ? 0 : val;
+  const dur = (val) => rm ? 0 : val;
+
+  return (
+    <div className={styles.pathway} aria-label="Intellectual journey: Philosophy, Law, Governance">
+      <svg
+        viewBox="0 0 1000 90"
+        className={styles.pathwaySvg}
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        {/* Main connecting line */}
+        <motion.path
+          d="M 80 34 L 920 34"
+          stroke="rgba(212,168,67,0.3)"
+          strokeWidth={1}
+          fill="none"
+          initial={rm ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+          animate={isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+          transition={{
+            pathLength: { duration: dur(ANIM.PATHWAY_DURATION), delay: d(ANIM.PATHWAY_DELAY), ease: EASE },
+            opacity:    { duration: 0.3, delay: d(ANIM.PATHWAY_DELAY) },
+          }}
+        />
+
+        {/* Nodes — outer ring + inner dot */}
+        {PATHWAY_NODES.map(({ cx }, i) => (
+          <g key={i}>
+            <motion.circle
+              cx={cx} cy={34} r={8}
+              fill="none"
+              stroke="rgba(212,168,67,0.55)"
+              strokeWidth={1.4}
+              initial={{ scale: rm ? 1 : 0, opacity: 0 }}
+              animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+              transition={{ duration: dur(0.5), delay: d(ANIM.PATHWAY_NODE_DELAYS[i]), ease: EASE_C }}
+              style={{ transformOrigin: `${cx}px 34px` }}
+            />
+            <motion.circle
+              cx={cx} cy={34} r={3.5}
+              fill="rgba(212,168,67,0.88)"
+              initial={{ scale: rm ? 1 : 0, opacity: 0 }}
+              animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+              transition={{ duration: dur(0.35), delay: d(ANIM.PATHWAY_NODE_DELAYS[i] + 0.1), ease: EASE_C }}
+              style={{ transformOrigin: `${cx}px 34px` }}
+            />
+          </g>
+        ))}
+
+        {/* Labels below nodes */}
+        {PATHWAY_NODES.map(({ cx, label }, i) => (
+          <motion.text
+            key={label}
+            x={cx}
+            y={74}
+            textAnchor="middle"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: dur(0.6), delay: d(ANIM.PATHWAY_NODE_DELAYS[i] + ANIM.PATHWAY_LABEL_OFFSET) }}
+            style={{
+              fontFamily: 'Inter,-apple-system,sans-serif',
+              fontSize: '10px',
+              fontWeight: '500',
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              fill: 'rgba(212,168,67,0.75)',
+            }}
+          >
+            {label}
+          </motion.text>
+        ))}
+      </svg>
+    </div>
   );
 }
